@@ -26,6 +26,7 @@ import ErrorPage from './ErrorPage.jsx';
 import { Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAuth } from '../../hooks/authenticationHook.tsx';
+import MainPageRedirect from '../../components/navigation/MainPageRedirect.tsx';
 
 const ThemeEditorPage = () => {
     const { t } = useTranslation();
