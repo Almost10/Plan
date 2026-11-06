@@ -1,10 +1,14 @@
 import React from 'react';
-import { ErrorViewCard } from '../../../../views/ErrorView.tsx';
+import { ErrorViewCard } from '../../../../views/ErrorView';
 import RecentSessionsCard from '../../common/RecentSessionsCard';
-import { useSessions } from '../../../../dataHooks/sessionsHooks.ts';
-import { useGenericFilter } from '../../../../dataHooks/genericFilterContextHook.tsx';
+import { useSessions } from '../../../../dataHooks/sessionsHooks';
+import { useGenericFilter } from '../../../../dataHooks/genericFilterContextHook';
 
-const ServerRecentSessionsCard = ({ identifier }) => {
+type Props = {
+    identifier?: string;
+};
+
+const ServerRecentSessionsCard = ({ identifier }: Props) => {
     const { after, before } = useGenericFilter();
     const { data: sessions, error: loadingError } = useSessions({
         after,

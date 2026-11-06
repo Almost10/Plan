@@ -1,19 +1,19 @@
 import { Col } from 'react-bootstrap';
 import React from 'react';
 import ServerRecentSessionsCard from '../../components/cards/server/tables/ServerRecentSessionsCard';
-import SessionInsightsCard from '../../components/cards/server/insights/SessionInsightsCard.tsx';
-import LoadIn from '../../components/animation/LoadIn.tsx';
+import SessionInsightsCard from '../../components/cards/server/insights/SessionInsightsCard';
+import LoadIn from '../../components/animation/LoadIn';
 import { useParams } from 'react-router';
-import ExtendableRow from '../../components/layout/extension/ExtendableRow.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
-import { ServerSessionCalendarCard } from '../../components/cards/server/graphs/ServerSessionCalendarCard.tsx';
-import { GenericFilterContextProvider } from '../../dataHooks/genericFilterContextHook.tsx';
-import { DateFilterControls } from '../../components/input/DateFilterControls.tsx';
-import ServerWorldPieCard from '../../components/cards/server/graphs/ServerWorldPieCard.tsx';
+import ExtendableRow from '../../components/layout/extension/ExtendableRow';
+import { useAuth } from '../../hooks/authenticationHook';
+import { ServerSessionCalendarCard } from '../../components/cards/server/graphs/ServerSessionCalendarCard';
+import { GenericFilterContextProvider } from '../../dataHooks/genericFilterContextHook';
+import { DateFilterControls } from '../../components/input/DateFilterControls';
+import ServerWorldPieCard from '../../components/cards/server/graphs/ServerWorldPieCard';
 
 const ServerSessions = () => {
     const { hasPermission } = useAuth();
-    const { identifier } = useParams();
+    const { identifier } = useParams() as { identifier: string };
 
     const seeSessionList = hasPermission('page.server.sessions.list');
     const seeSessionInsights = hasPermission('page.server.sessions.overview');

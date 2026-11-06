@@ -1,12 +1,12 @@
 import { filterToQueryString, GenericFilter } from './model/GenericFilter';
 import { useQuery } from '@tanstack/react-query';
 import { baseAddress, staticSite } from '../service/backendConfiguration';
-import { Session } from 'react-router';
 import { useNavigation } from '../hooks/navigationHook';
 import { useEffect } from 'react';
 import { queryRetry } from './queryRetry';
 import { useDateConverter } from '../util/format/useDateConverter';
 import { useAuth } from '../hooks/authenticationHook';
+import { FinishedSession } from './model/session/FinishedSession';
 
 function getPermission(filter: GenericFilter) {
     if (filter) {
@@ -64,5 +64,5 @@ const getSessions = async (filter: GenericFilter) => {
             message: response.statusText,
             data: response.body,
         };
-    return (await response.json()) as Promise<Session[]>;
+    return (await response.json()) as FinishedSession[];
 };

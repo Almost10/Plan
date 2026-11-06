@@ -8,10 +8,18 @@ import { faCalendar, faHandPointer } from '@fortawesome/free-regular-svg-icons';
 import SessionAccordion from '../../accordion/SessionAccordion';
 import React from 'react';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { useGenericFilter } from '../../../dataHooks/genericFilterContextHook.tsx';
-import { TitleWithDates } from '../../text/TitleWithDates.tsx';
+import { useGenericFilter } from '../../../dataHooks/genericFilterContextHook';
+import { TitleWithDates } from '../../text/TitleWithDates';
+import { FinishedSession } from '../../../dataHooks/model/session/FinishedSession';
 
-const RecentSessionsCard = ({ id, sessions, isPlayer, isNetwork }) => {
+type Props = {
+    id?: string;
+    sessions?: FinishedSession[];
+    isPlayer?: boolean;
+    isNetwork?: boolean;
+};
+
+const RecentSessionsCard = ({ id, sessions, isPlayer, isNetwork }: Props) => {
     const { after, before } = useGenericFilter();
     const { t } = useTranslation();
 

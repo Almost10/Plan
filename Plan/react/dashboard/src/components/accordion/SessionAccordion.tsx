@@ -9,22 +9,27 @@ import {
     faUserPlus,
 } from '@fortawesome/free-solid-svg-icons';
 import { faClock, faMap } from '@fortawesome/free-regular-svg-icons';
-import Datapoint from '../datapoint/Datapoint.tsx';
+import Datapoint from '../datapoint/Datapoint';
 import { Col, Row } from 'react-bootstrap';
 import WorldPie from '../graphs/WorldPie';
 import { SimpleKillsTable } from '../table/KillsTable';
 import { useTranslation } from 'react-i18next';
-import { usePreferences } from '../../hooks/preferences/preferencesHook.tsx';
-import FormattedDate from '../text/FormattedDate.tsx';
-import FormattedTime from '../text/FormattedTime.tsx';
-import PlayerPageLinkButton from '../input/button/PlayerPageLinkButton.tsx';
-import ServerPageLinkButton from '../input/button/ServerPageLinkButton.tsx';
-import { useDecimalFormatter } from '../../util/format/useDecimalFormatter.ts';
-import { usePingFormatter } from '../../util/format/usePingFormatter.ts';
+import { usePreferences } from '../../hooks/preferences/preferencesHook';
+import FormattedDate from '../text/FormattedDate';
+import FormattedTime from '../text/FormattedTime';
+import PlayerPageLinkButton from '../input/button/PlayerPageLinkButton';
+import ServerPageLinkButton from '../input/button/ServerPageLinkButton';
+import { useDecimalFormatter } from '../../util/format/useDecimalFormatter';
+import { usePingFormatter } from '../../util/format/usePingFormatter';
 import DataTablesTable from '../table/DataTablesTable.jsx';
-import { ChartLoader } from '../navigation/Loader.tsx';
+import { ChartLoader } from '../navigation/Loader';
+import { FinishedSession } from '../../dataHooks/model/session/FinishedSession';
 
-const SessionBody = ({ session }) => {
+type SessionBodyProps = {
+    session: FinishedSession;
+};
+
+const SessionBody = ({ session }: SessionBodyProps) => {
     const { t } = useTranslation();
     const { formatDecimals } = useDecimalFormatter();
     const { formatPing } = usePingFormatter();
@@ -114,7 +119,13 @@ const SessionBody = ({ session }) => {
     );
 };
 
-const SessionAccordion = ({ sessions, isPlayer, isNetwork }) => {
+type Props = {
+    sessions?: FinishedSession[];
+    isPlayer?: boolean;
+    isNetwork?: boolean;
+};
+
+const SessionAccordion = ({ sessions, isPlayer, isNetwork }: Props) => {
     const { t } = useTranslation();
     const { preferencesLoaded } = usePreferences();
 
@@ -205,14 +216,17 @@ const SessionAccordion = ({ sessions, isPlayer, isNetwork }) => {
         [sessions],
     );
 
-    const rowKeyFunction = useCallback((session, column) => {
-        return (
-            session.playerUUID +
-            session.serverUUID +
-            session.start +
-            JSON.stringify(column?.data)
-        );
-    }, []);
+    const rowKeyFunction = useCallback(
+        (session: FinishedSession, column: { data: unknown } | null) => {
+            return (
+                session.playerUUID +
+                session.serverUUID +
+                session.start +
+                JSON.stringify(column?.data)
+            );
+        },
+        [],
+    );
 
     const options = useMemo(() => {
         return {
@@ -233,7 +247,10 @@ const SessionAccordion = ({ sessions, isPlayer, isNetwork }) => {
             rowKeyFunction={rowKeyFunction}
             options={options}
             clickableRows
-            expandComponent={({ row }) => <SessionBody session={row} />}
+            expandComponent={({ row }: { row: FinishedSession }) => (
+                <SessionBody session={row} />
+            )}
+            colorClass={undefined}
         />
     );
 };
