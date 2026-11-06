@@ -5,7 +5,7 @@ import Highcharts from 'highcharts/esm/highmaps';
 import topology from '@highcharts/map-collection/custom/world.topo.json';
 import 'highcharts/esm/modules/accessibility';
 import 'highcharts/esm/modules/no-data-to-display';
-import { calculateCssHexColor } from '../../util/colors.js';
+import { calculateCssHexColor } from '../../util/colors';
 import { localeService } from '../../service/localeService.js';
 
 export const ProjectionOptions = {

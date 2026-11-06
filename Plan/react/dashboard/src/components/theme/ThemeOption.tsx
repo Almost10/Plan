@@ -9,7 +9,7 @@ import { ThemeStyleCss } from './ThemeStyleCss';
 import { Card, Col } from 'react-bootstrap';
 import logo from '../../Flaticon_circle.png';
 import drawSine from '../../util/loginSineRenderer.js';
-import { calculateCssHexColor } from '../../util/colors.js';
+import { calculateCssHexColor } from '../../util/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faCheck,

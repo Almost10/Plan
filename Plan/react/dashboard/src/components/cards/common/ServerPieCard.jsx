@@ -6,7 +6,7 @@ import { faNetworkWired } from '@fortawesome/free-solid-svg-icons';
 import CardHeader from '../CardHeader.tsx';
 import { ErrorViewCard } from '../../../views/ErrorView.tsx';
 import { useThemeStorage } from '../../../hooks/context/themeContextHook.tsx';
-import { nameToCssVariable } from '../../../util/colors.js';
+import { nameToCssVariable } from '../../../util/colors';
 import { useServerPie } from '../../../dataHooks/graphHooks.ts';
 import { useGenericFilter } from '../../../dataHooks/genericFilterContextHook.tsx';
 import { TitleWithDates } from '../../text/TitleWithDates.tsx';

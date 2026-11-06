@@ -2,7 +2,7 @@ import React from 'react';
 import {
     nameToContrastCssVariable,
     nameToCssVariable,
-} from '../../util/colors.js';
+} from '../../util/colors';
 import { FontAwesomeIcon as Fa } from '@fortawesome/react-fontawesome';
 import { faCheck, faPalette } from '@fortawesome/free-solid-svg-icons';
 

@@ -1,16 +1,16 @@
-export const nameToCssVariable = (name) => {
+export const nameToCssVariable = (name: string) => {
     return `var(--color-${name})`;
 };
 
-export const nameToContrastCssVariable = (name) => {
+export const nameToContrastCssVariable = (name: string) => {
     return `var(--contrast-color-${name})`;
 };
 
-export const cssVariableToName = (cssVariable) => {
+export const cssVariableToName = (cssVariable: string) => {
     return cssVariable?.replace('var(--color-', '').replace(')', '');
 };
 
-export const hsxStringToArray = (hsxString) => {
+export const hsxStringToArray = (hsxString: string) => {
     const color = hsxString.substring(4, hsxString.length - 1);
     const split = color.split(',');
     const h = Number(split[0]);
@@ -19,7 +19,7 @@ export const hsxStringToArray = (hsxString) => {
     return [h, s, x];
 };
 
-export const hslaStringToArray = (hslaString) => {
+export const hslaStringToArray = (hslaString: string) => {
     const color = hslaString.substring(4, hslaString.length - 1);
     const split = color.split(',');
     const h = Number(split[0]);
@@ -29,7 +29,7 @@ export const hslaStringToArray = (hslaString) => {
     return [h, s, l, a];
 };
 
-export const hslToHsv = ([h, s, l]) => {
+export const hslToHsv = ([h, s, l]: number[]) => {
     // Normalize s and l if they are > 1 (i.e., in [0, 100])
     if (h > 1 || s > 1 || l > 1) {
         h = h / 360;
@@ -42,12 +42,12 @@ export const hslToHsv = ([h, s, l]) => {
     return [h, Math.max(0, Math.min(1, newS)), Math.max(0, Math.min(1, v))];
 };
 
-export const hsvToHex = (hsv) => {
+export const hsvToHex = (hsv: number[]) => {
     return rgbToHexString(hsvToRgb(hsv));
 };
 
-export const hsvToRgb = ([h, s, v]) => {
-    let r, g, b;
+export const hsvToRgb = ([h, s, v]: number[]) => {
+    let r!: number, g!: number, b!: number;
 
     if (h > 1 || s > 1 || v > 1) {
         h = h / 360;
@@ -99,7 +99,7 @@ export const hsvToRgb = ([h, s, v]) => {
     return [r * 255, g * 255, b * 255];
 };
 
-export const randomHSVColor = (i) => {
+export const randomHSVColor = (i: number) => {
     const goldenRatioConjugate = 0.618033988749895;
     const hue = (i * goldenRatioConjugate) % 1;
     const saturation = 0.7;
@@ -107,7 +107,7 @@ export const randomHSVColor = (i) => {
     return [hue, saturation, value];
 };
 
-export const rgbStringToArray = (rgbString) => {
+export const rgbStringToArray = (rgbString: string) => {
     const colors = rgbString.substring(4, rgbString.length - 1);
     const split = colors.split(',');
     return [
@@ -117,7 +117,7 @@ export const rgbStringToArray = (rgbString) => {
     ];
 };
 
-export const rgbaStringToArray = (rgbaString) => {
+export const rgbaStringToArray = (rgbaString: string) => {
     const colors = rgbaString.substring(5, rgbaString.length - 1);
     const split = colors.split(',');
     return [
@@ -128,15 +128,15 @@ export const rgbaStringToArray = (rgbaString) => {
     ];
 };
 
-export const rgbToHexString = ([r, g, b]) => {
+export const rgbToHexString = ([r, g, b]: number[]) => {
     return '#' + rgbToHex(r) + rgbToHex(g) + rgbToHex(b);
 };
 
-const rgbToHex = (component) => {
+const rgbToHex = (component: number) => {
     return Math.floor(component).toString(16).padStart(2, '0');
 };
 
-export const hexToRgb = (hexString) => {
+export const hexToRgb = (hexString: string) => {
     const hex = hexString.replace('#', '');
     if (hex.length === 6) {
         const r = Number.parseInt(hex.substring(0, 2), 16);
@@ -156,13 +156,13 @@ export const hexToRgb = (hexString) => {
 };
 
 // https://css-tricks.com/converting-color-spaces-in-javascript/
-export const rgbToHsl = ([r, g, b]) => {
+export const rgbToHsl = ([r, g, b]: number[]) => {
     r /= 255;
     g /= 255;
     b /= 255;
     const max = Math.max(r, g, b),
         min = Math.min(r, g, b);
-    let h, s;
+    let h!: number, s: number;
     const l = (max + min) / 2;
 
     if (max === min) {
@@ -190,7 +190,10 @@ export const rgbToHsl = ([r, g, b]) => {
 };
 
 // From https://stackoverflow.com/a/3732187
-export const withReducedSaturation = (hex, reduceSaturationPercentage) => {
+export const withReducedSaturation = (
+    hex: string,
+    reduceSaturationPercentage?: number,
+) => {
     if (hex.startsWith('var(')) hex = calculateCssHexColor(hex);
     const saturationReduction = reduceSaturationPercentage || 0.7;
 
@@ -213,23 +216,26 @@ export const withReducedSaturation = (hex, reduceSaturationPercentage) => {
     );
 };
 
-export const rgbToString = ([r, g, b]) => {
+export const rgbToString = ([r, g, b]: number[]) => {
     return `rgb(${r}, ${g}, ${b})`;
 };
 
-export const rgbaToString = ([r, g, b, a]) => {
+export const rgbaToString = ([r, g, b, a]: number[]) => {
     return `rgba(${r}, ${g}, ${b}, ${a})`;
 };
 
-export const hslToString = ([h, s, l]) => {
+export const hslToString = ([h, s, l]: number[]) => {
     return `hsl(${h}, ${s}%, ${l}%)`;
 };
 
-export const hsvToString = ([h, s, v]) => {
+export const hsvToString = ([h, s, v]: number[]) => {
     return `hsv(${h}, ${s}%, ${v}%)`;
 };
 
-export const calculateCssHexColor = (cssColor, inElement) => {
+export const calculateCssHexColor = (
+    cssColor: string,
+    inElement?: HTMLElement | null,
+) => {
     const colorCalculationElement = document.createElement('div');
     colorCalculationElement.style.display = 'none';
     colorCalculationElement.style.color = cssColor;
@@ -243,8 +249,12 @@ export const calculateCssHexColor = (cssColor, inElement) => {
     return hex;
 };
 
-export const calculateCssColors = (cssSelector) => {
-    const colors = {
+export const calculateCssColors = (cssSelector: string) => {
+    const colors: {
+        color: string | null;
+        backgroundColor: string | null;
+        borderColor: string | null;
+    } = {
         color: null,
         backgroundColor: null,
         borderColor: null,

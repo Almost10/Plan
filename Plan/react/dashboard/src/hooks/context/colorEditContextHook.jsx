@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useState } from 'react';
-import { hsvToHex, randomHSVColor } from '../../util/colors.js';
+import { hsvToHex, randomHSVColor } from '../../util/colors';
 
 const ColorEditContext = createContext({});
 

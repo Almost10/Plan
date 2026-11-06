@@ -5,7 +5,7 @@ import {
     cssVariableToName,
     nameToContrastCssVariable,
     nameToCssVariable,
-} from '../../util/colors.js';
+} from '../../util/colors';
 
 const useMenuPlacement = (isOpen) => {
     const selectedItemRef = useRef(null);

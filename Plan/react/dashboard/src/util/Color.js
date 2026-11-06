@@ -12,7 +12,7 @@ import {
     rgbToHexString,
     rgbToHsl,
     rgbToString,
-} from './colors.js';
+} from './colors';
 
 export const getColorConverter = (color) => {
     try {

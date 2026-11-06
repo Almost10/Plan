@@ -9,7 +9,7 @@ import WorldPerformanceGraph from '../../graphs/performance/WorldPerformanceGrap
 import DiskPerformanceGraph from '../../graphs/performance/DiskPerformanceGraph.jsx';
 import PingGraph from '../../graphs/performance/PingGraph.jsx';
 import GeolocationsCard from '../../cards/common/GeolocationsCard.jsx';
-import { calculateCssHexColor } from '../../../util/colors.js';
+import { calculateCssHexColor } from '../../../util/colors';
 import Background from './Background.tsx';
 
 const randomDate = (start, end) => {
