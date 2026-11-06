@@ -136,7 +136,7 @@ const ThemeEditorPage = React.lazy(
 );
 const AddThemeView = React.lazy(() => import('./views/theme/AddThemeView'));
 const DeleteThemesView = React.lazy(
-    () => import('./views/theme/DeleteThemesView.jsx'),
+    () => import('./views/theme/DeleteThemesView'),
 );
 const ThemeEditorView = React.lazy(
     () => import('./views/theme/ThemeEditorView'),

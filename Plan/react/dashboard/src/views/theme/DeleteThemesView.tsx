@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
-import { useMetadata } from '../../hooks/metadataHook.tsx';
+import { useMetadata } from '../../hooks/metadataHook';
 import {
     faExclamationTriangle,
     faInfoCircle,
     faTrash,
 } from '@fortawesome/free-solid-svg-icons';
-import CardHeader from '../../components/cards/CardHeader.tsx';
+import CardHeader from '../../components/cards/CardHeader';
 import { Card, Col, Row } from 'react-bootstrap';
-import ThemeOption from '../../components/theme/ThemeOption.tsx';
-import { ChartLoader } from '../../components/navigation/Loader.tsx';
+import ThemeOption from '../../components/theme/ThemeOption';
+import { ChartLoader } from '../../components/navigation/Loader';
 import {
     getLocallyStoredThemes,
     ThemeContextProvider,
     useTheme,
-} from '../../hooks/themeHook.tsx';
+} from '../../hooks/themeHook';
 import { useTranslation } from 'react-i18next';
 import {
     ThemeStorageContextProvider,
     useThemeStorage,
-} from '../../hooks/context/themeContextHook.tsx';
+} from '../../hooks/context/themeContextHook';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import LoadIn from '../../components/animation/LoadIn.tsx';
-import Checkbox from '../../components/input/Checkbox.tsx';
-import DangerButton from '../../components/input/button/DangerButton.tsx';
-import { ThemeEditContextProvider } from '../../hooks/context/themeEditContextHook.tsx';
-import DownloadButton from '../../components/theme/DownloadButton.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
+import LoadIn from '../../components/animation/LoadIn';
+import Checkbox from '../../components/input/Checkbox';
+import DangerButton from '../../components/input/button/DangerButton';
+import { ThemeEditContextProvider } from '../../hooks/context/themeEditContextHook';
+import DownloadButton from '../../components/theme/DownloadButton';
+import { useAuth } from '../../hooks/authenticationHook';
 import { deleteTheme } from '../../service/metadataService.js';
 
 const DeleteThemesView = () => {

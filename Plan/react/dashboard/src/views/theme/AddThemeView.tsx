@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
-import { useMetadata } from '../../hooks/metadataHook.tsx';
+import React, { ChangeEvent, useState } from 'react';
+import { useMetadata } from '../../hooks/metadataHook';
 import {
     faFileSignature,
     faInfoCircle,
     faPlusCircle,
 } from '@fortawesome/free-solid-svg-icons';
-import CardHeader from '../../components/cards/CardHeader.tsx';
+import CardHeader from '../../components/cards/CardHeader';
 import { Card, Col, Row } from 'react-bootstrap';
-import TextInput from '../../components/input/TextInput.tsx';
-import ThemeOption from '../../components/theme/ThemeOption.tsx';
-import { ChartLoader } from '../../components/navigation/Loader.tsx';
-import { useTheme } from '../../hooks/themeHook.tsx';
-import ActionButton from '../../components/input/button/ActionButton.tsx';
+import TextInput from '../../components/input/TextInput';
+import ThemeOption from '../../components/theme/ThemeOption';
+import { ChartLoader } from '../../components/navigation/Loader';
+import { useTheme } from '../../hooks/themeHook';
+import ActionButton from '../../components/input/button/ActionButton';
 import { useTranslation } from 'react-i18next';
-import { useThemeStorage } from '../../hooks/context/themeContextHook.tsx';
+import { useThemeStorage } from '../../hooks/context/themeContextHook';
 import { useNavigate } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import LoadIn from '../../components/animation/LoadIn.tsx';
-import ErrorView from '../ErrorView.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
+import LoadIn from '../../components/animation/LoadIn';
+import ErrorView from '../ErrorView';
+import { useAuth } from '../../hooks/authenticationHook';
 
 const AddThemeView = () => {
     const { hasPermission } = useAuth();
@@ -44,18 +44,18 @@ const AddThemeView = () => {
         }
     };
 
-    const onUploadFinished = (event) => {
-        const theme = JSON.parse(event.target.result);
+    const onUploadFinished = (event: ProgressEvent<FileReader>) => {
+        const theme = JSON.parse(event.target!.result as string);
         themeStorage.saveUploadedThemeLocally(name, theme);
         navigate('/theme-editor/' + name);
     };
-    const onUpload = (event) => {
+    const onUpload = (event: ChangeEvent<HTMLInputElement>) => {
         const reader = new FileReader();
         reader.onload = onUploadFinished;
-        reader.readAsText(event.target.files[0]);
+        reader.readAsText(event.target.files![0]);
     };
 
-    const isNameInvalid = (newValue) => {
+    const isNameInvalid = (newValue: string) => {
         return (
             !newValue.length ||
             newValue.length > 100 ||
