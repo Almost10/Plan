@@ -77,8 +77,16 @@ type ThemeEditContextValue = {
     redoCount: number;
     deleteColor: (name: string) => void;
     deleteNightColor: (name: string) => void;
-    saveColor: (name: string, color: string, previous: string) => void;
-    saveNightColor: (name: string, color: string, previous: string) => void;
+    saveColor: (
+        name: string,
+        color: string,
+        previous: string | undefined,
+    ) => void;
+    saveNightColor: (
+        name: string,
+        color: string,
+        previous: string | undefined,
+    ) => void;
     updateUseCase: (newValue: string | string[], path: string[]) => void;
     updateNightUseCase: (newValue: string | string[], path: string[]) => void;
     removeNightOverride: (path: string[]) => void;
@@ -187,7 +195,7 @@ export const ThemeEditContextProvider = ({ children }: PropsWithChildren) => {
 
     const updateUseCaseColorName = (
         current: UseCaseMap,
-        oldName: string,
+        oldName: string | undefined,
         newName: string,
     ) => {
         const oldVariable = nameToCssVariable(oldName);
@@ -201,7 +209,7 @@ export const ThemeEditContextProvider = ({ children }: PropsWithChildren) => {
 
     const handleColorSave =
         (current: ColorPropertyMap) =>
-        (name: string, color: string, previous: string) => {
+        (name: string, color: string, previous: string | undefined) => {
             const newObj: any = {};
             for (const [key, value] of Object.entries(current)) {
                 if (key === previous) {
@@ -215,7 +223,11 @@ export const ThemeEditContextProvider = ({ children }: PropsWithChildren) => {
             }
             return newObj as ColorPropertyMap;
         };
-    const saveColor = (name: string, color: string, previous: string) => {
+    const saveColor = (
+        name: string,
+        color: string,
+        previous: string | undefined,
+    ) => {
         const renamed = previous && name !== previous;
         if (renamed) {
             addEdit(
@@ -262,7 +274,11 @@ export const ThemeEditContextProvider = ({ children }: PropsWithChildren) => {
             );
         }
     };
-    const saveNightColor = (name: string, color: string, previous: string) => {
+    const saveNightColor = (
+        name: string,
+        color: string,
+        previous: string | undefined,
+    ) => {
         const renamed = name !== previous;
         if (renamed) {
             addEdit(

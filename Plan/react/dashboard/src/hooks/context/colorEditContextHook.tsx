@@ -28,7 +28,7 @@ type Props = {
     colors: ColorPropertyMap;
     saveFunction: (
         name: string,
-        color: string | undefined,
+        color: string,
         previous: string | undefined,
     ) => void;
     deleteFunction: (name: string) => void;
@@ -72,11 +72,11 @@ export const ColorEditContextProvider = ({
 
     const finishEdit = () => {
         if (name!.length) {
-            saveFunction(name!, color, previous);
+            saveFunction(name!, color!, previous);
         } else {
             saveFunction(
                 'new-color-' + Math.floor(Math.random() * 1000),
-                color,
+                color!,
                 previous,
             );
         }

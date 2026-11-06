@@ -1,4 +1,4 @@
-export const nameToCssVariable = (name: string) => {
+export const nameToCssVariable = (name: string | undefined) => {
     return `var(--color-${name})`;
 };
 

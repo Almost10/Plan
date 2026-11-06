@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useThemeEditContext } from '../../hooks/context/themeEditContextHook.tsx';
+import { useThemeEditContext } from '../../hooks/context/themeEditContextHook';
 import { Card, Col, Row } from 'react-bootstrap';
 import EditorMenuToast from '../../components/theme/EditorMenuToast';
-import CardHeader from '../../components/cards/CardHeader.tsx';
-import TextInput from '../../components/input/TextInput.tsx';
+import CardHeader from '../../components/cards/CardHeader';
+import TextInput from '../../components/input/TextInput';
 import { ColorEditContextProvider } from '../../hooks/context/colorEditContextHook';
 import ColorSection from '../../components/theme/ColorSection';
 import ColorEditForm from '../../components/theme/ColorEditForm';
@@ -15,15 +15,16 @@ import {
     faFileSignature,
     faSwatchbook,
 } from '@fortawesome/free-solid-svg-icons';
-import ActionButton from '../../components/input/button/ActionButton.tsx';
-import UnsavedChangesText from '../../components/text/UnsavedChangesText.tsx';
-import SecondaryActionButton from '../../components/input/button/SecondaryActionButton.tsx';
+import ActionButton from '../../components/input/button/ActionButton';
+import UnsavedChangesText from '../../components/text/UnsavedChangesText';
+import SecondaryActionButton from '../../components/input/button/SecondaryActionButton';
 import { MinHeightProvider } from '../../hooks/context/minHeightContextHook';
-import { useMetadata } from '../../hooks/metadataHook.tsx';
+import { useMetadata } from '../../hooks/metadataHook';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import DownloadButton from '../../components/theme/DownloadButton.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
-import { ConfigurationStorageContextProvider } from '../../hooks/context/configurationStorageContextHook.tsx';
+import DownloadButton from '../../components/theme/DownloadButton';
+import { useAuth } from '../../hooks/authenticationHook';
+import { ConfigurationStorageContextProvider } from '../../hooks/context/configurationStorageContextHook';
+import { ColorPropertyMap } from '../../components/theme/model/ThemeConfig';
 
 const ThemeEditorView = () => {
     const { hasPermission } = useAuth();
@@ -51,20 +52,31 @@ const ThemeEditorView = () => {
         onlyLocal,
         save,
     } = useThemeEditContext();
-    const [hoveredItem, setHoveredItem] = useState(undefined);
+    const [hoveredItem, setHoveredItem] = useState<string | undefined>(
+        undefined,
+    );
     const [nightHover, setNightHover] = useState(false);
-    const onHoverChange = (id, state, night) => {
+    const onHoverChange = (
+        id: string | undefined,
+        state: 'enter' | 'exit',
+        night: boolean,
+    ) => {
         if (state === 'enter') {
             setHoveredItem(id);
             setNightHover(night);
         }
     };
 
-    const referenceColors = currentUseCases.referenceColors;
-    const nightReferenceColors = currentNightModeUseCases.referenceColors;
+    const referenceColors = currentUseCases.referenceColors as ColorPropertyMap;
+    const nightReferenceColors =
+        currentNightModeUseCases.referenceColors as ColorPropertyMap;
 
     const title = t('html.label.themeEditor.title');
-    const colors = { ...referenceColors, '-': '', ...currentColors };
+    const colors: ColorPropertyMap = {
+        ...referenceColors,
+        '-': '',
+        ...currentColors,
+    };
     const nightColors = {
         ...nightReferenceColors,
         '-': '',
@@ -72,7 +84,7 @@ const ThemeEditorView = () => {
         ...colors,
     };
 
-    const isNameInvalid = (newValue) => {
+    const isNameInvalid = (newValue: string) => {
         return (
             !newValue.length ||
             newValue.length > 100 ||
