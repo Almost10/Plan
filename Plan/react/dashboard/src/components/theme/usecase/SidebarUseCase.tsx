@@ -1,5 +1,5 @@
 import React from 'react';
-import Sidebar from '../../navigation/Sidebar.jsx';
+import Sidebar, { SidebarItem } from '../../navigation/Sidebar';
 import {
     faCogs,
     faInfoCircle,
@@ -16,7 +16,7 @@ export const SidebarUseCase = () => {
     const { t } = useTranslation();
     const { displayedServerName } = useMetadata();
 
-    let items = [
+    let items: SidebarItem[] = [
         {
             name: 'html.label.networkOverview',
             icon: faInfoCircle,

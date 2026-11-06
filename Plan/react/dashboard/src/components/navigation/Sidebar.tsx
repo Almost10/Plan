@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { MouseEvent, useCallback, useEffect, useState } from 'react';
 import { FontAwesomeIcon as Fa } from '@fortawesome/react-fontawesome';
 import logo from '../../Flaticon_circle.png';
 import {
@@ -8,17 +8,52 @@ import {
     faQuestionCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import { Link, NavLink, useLocation } from 'react-router';
-import { useTheme } from '../../hooks/themeHook.tsx';
-import PluginInformationModal from '../modal/PluginInformationModal.tsx';
-import VersionInformationModal from '../modal/VersionInformationModal.tsx';
+import { useTheme } from '../../hooks/themeHook';
+import PluginInformationModal from '../modal/PluginInformationModal';
+import VersionInformationModal from '../modal/VersionInformationModal';
 import { fetchPlanVersion } from '../../service/metadataService';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
-import { useNavigation } from '../../hooks/navigationHook.tsx';
+import { useAuth } from '../../hooks/authenticationHook';
+import { useNavigation } from '../../hooks/navigationHook';
 import { useTranslation } from 'react-i18next';
 import { Collapse } from 'react-bootstrap';
 import { baseAddress } from '../../service/backendConfiguration';
 import PageNavigationItem from './PageNavigationItem';
-import { useWindowWidth } from '../../hooks/interaction/windowWidthHook.tsx';
+import { useWindowWidth } from '../../hooks/interaction/windowWidthHook';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { TFunction } from 'i18next';
+import { VersionInfo } from '../../service/model/VersionInfo';
+
+type SidebarLink = {
+    name: string;
+    nameShort?: string;
+    href: string;
+    icon: IconProp;
+    color?: string;
+    external?: boolean;
+    permission?: string;
+    contents?: undefined;
+};
+
+type SidebarDivider = Record<string, never>;
+
+type SidebarCollapseItem = {
+    name: string;
+    icon: IconProp;
+    color?: string;
+    permission?: string;
+    contents: (SidebarLink | SidebarDivider)[];
+    href?: undefined;
+};
+
+type SidebarHeading = {
+    name: string;
+    permission?: string;
+    contents?: undefined;
+    href?: undefined;
+};
+
+export type SidebarItem =
+    SidebarLink | SidebarCollapseItem | SidebarHeading | SidebarDivider;
 
 const Logo = () => (
     <Link
@@ -28,9 +63,23 @@ const Logo = () => (
     </Link>
 );
 
-const Divider = ({ showMargin }) => (
+type DividerProps = {
+    showMargin?: boolean | number;
+};
+
+const Divider = ({ showMargin }: DividerProps) => (
     <hr className={'sidebar-divider' + (showMargin ? '' : ' my-0')} />
 );
+
+type InnerItemProps = {
+    href?: string;
+    icon: IconProp;
+    name: string;
+    nameShort: string;
+    color?: string;
+    external?: boolean;
+    collapseSidebar: () => void;
+};
 
 const InnerItem = ({
     href,
@@ -40,7 +89,7 @@ const InnerItem = ({
     color,
     external,
     collapseSidebar,
-}) => {
+}: InnerItemProps) => {
     if (!href) {
         return <hr className={'nav-servers dropdown-divider mx-3 my-2'} />;
     }
@@ -69,7 +118,13 @@ const InnerItem = ({
     );
 };
 
-export const Item = ({ item, inner, collapseSidebar }) => {
+type ItemProps = {
+    item: SidebarLink | SidebarDivider;
+    inner?: boolean;
+    collapseSidebar: () => void;
+};
+
+export const Item = ({ item, inner, collapseSidebar }: ItemProps) => {
     const { setCurrentTab } = useNavigation();
     const { pathname } = useLocation();
     const { t } = useTranslation();
@@ -87,7 +142,7 @@ export const Item = ({ item, inner, collapseSidebar }) => {
                 href={href}
                 icon={icon}
                 name={t(name)}
-                nameShort={t(nameShort)}
+                nameShort={t(nameShort!)}
                 color={color}
                 external={external}
                 collapseSidebar={collapseSidebar}
@@ -121,7 +176,15 @@ export const Item = ({ item, inner, collapseSidebar }) => {
     );
 };
 
-const VersionButton = ({ toggleVersionModal, versionInfo }) => {
+type VersionButtonProps = {
+    toggleVersionModal: () => void;
+    versionInfo: VersionInfo;
+};
+
+const VersionButton = ({
+    toggleVersionModal,
+    versionInfo,
+}: VersionButtonProps) => {
     if (versionInfo.updateAvailable) {
         return (
             <button
@@ -141,12 +204,19 @@ const VersionButton = ({ toggleVersionModal, versionInfo }) => {
     );
 };
 
+type FooterButtonsProps = {
+    collapseSidebar: () => void;
+    toggleInfoModal: () => void;
+    toggleVersionModal: () => void;
+    versionInfo: VersionInfo;
+};
+
 const FooterButtons = ({
     collapseSidebar,
     toggleInfoModal,
     toggleVersionModal,
     versionInfo,
-}) => {
+}: FooterButtonsProps) => {
     const { t } = useTranslation();
     const { toggleColorChooser } = useTheme();
     const openColorChooser = useCallback(() => {
@@ -191,9 +261,21 @@ const FooterButtons = ({
     );
 };
 
-const SidebarCollapse = ({ item, open, setOpen, collapseSidebar }) => {
+type SidebarCollapseProps = {
+    item: SidebarCollapseItem;
+    open: boolean;
+    setOpen: (open: boolean) => void;
+    collapseSidebar: () => void;
+};
+
+const SidebarCollapse = ({
+    item,
+    open,
+    setOpen,
+    collapseSidebar,
+}: SidebarCollapseProps) => {
     const { t } = useTranslation();
-    const toggle = (event) => {
+    const toggle = (event: MouseEvent) => {
         event.preventDefault();
         setOpen(!open);
     };
@@ -221,7 +303,6 @@ const SidebarCollapse = ({ item, open, setOpen, collapseSidebar }) => {
                                 <Item
                                     key={JSON.stringify(content)}
                                     inner
-                                    active={false}
                                     item={content}
                                     collapseSidebar={collapseSidebar}
                                 />
@@ -234,20 +315,23 @@ const SidebarCollapse = ({ item, open, setOpen, collapseSidebar }) => {
 };
 
 const renderItem = (
-    item,
-    i,
-    openCollapse,
-    setOpenCollapse,
-    t,
-    windowWidth,
-    collapseSidebar,
+    item: SidebarItem,
+    i: number,
+    openCollapse: number | undefined,
+    setOpenCollapse: (index: number) => void,
+    t: TFunction,
+    windowWidth: number,
+    collapseSidebar: () => void,
 ) => {
     if (item.contents) {
         return (
             <SidebarCollapse
                 key={i}
                 item={item}
-                open={windowWidth < 660 || (openCollapse && openCollapse === i)}
+                open={
+                    (windowWidth < 660 ||
+                        (openCollapse && openCollapse === i)) as boolean
+                }
                 setOpen={() => setOpenCollapse(i)}
                 collapseSidebar={collapseSidebar}
             />
@@ -255,14 +339,7 @@ const renderItem = (
     }
 
     if (item.href !== undefined) {
-        return (
-            <Item
-                key={i}
-                active={false}
-                item={item}
-                collapseSidebar={collapseSidebar}
-            />
-        );
+        return <Item key={i} item={item} collapseSidebar={collapseSidebar} />;
     }
 
     if (item.name) {
@@ -276,13 +353,20 @@ const renderItem = (
     return <hr key={i} className='sidebar-divider' />;
 };
 
-const Sidebar = ({ page, items, openItemIndex, keepOpen }) => {
+type Props = {
+    page: string;
+    items: SidebarItem[];
+    openItemIndex?: number;
+    keepOpen?: boolean;
+};
+
+const Sidebar = ({ page, items, openItemIndex, keepOpen }: Props) => {
     const { t } = useTranslation();
     const { currentTab, sidebarExpanded, setSidebarExpanded } = useNavigation();
     const { authRequired, hasPermission, hasChildPermission } = useAuth();
 
     const [openCollapse, setOpenCollapse] = useState(openItemIndex);
-    const toggleCollapse = (collapse) => {
+    const toggleCollapse = (collapse: number) => {
         setOpenCollapse(openCollapse === collapse ? undefined : collapse);
     };
 
@@ -322,7 +406,7 @@ const Sidebar = ({ page, items, openItemIndex, keepOpen }) => {
         collapseConditionallyOnItemClick,
     ]);
 
-    const [versionInfo, setVersionInfo] = useState({
+    const [versionInfo, setVersionInfo] = useState<VersionInfo>({
         currentVersion: 'Loading..',
         updateAvailable: false,
     });
@@ -341,7 +425,7 @@ const Sidebar = ({ page, items, openItemIndex, keepOpen }) => {
         loadVersion();
     }, []);
 
-    const isVisible = (item) => {
+    const isVisible = (item: SidebarItem) => {
         return (
             !authRequired ||
             !item.permission ||
