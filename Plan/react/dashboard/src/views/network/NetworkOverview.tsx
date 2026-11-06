@@ -1,12 +1,12 @@
 import React from 'react';
-import LoadIn from '../../components/animation/LoadIn.tsx';
+import LoadIn from '../../components/animation/LoadIn';
 import { Col } from 'react-bootstrap';
-import ServerAsNumbersCard from '../../components/cards/server/values/ServerAsNumbersCard.tsx';
-import ServerWeekComparisonCard from '../../components/cards/server/tables/ServerWeekComparisonCard.tsx';
+import ServerAsNumbersCard from '../../components/cards/server/values/ServerAsNumbersCard';
+import ServerWeekComparisonCard from '../../components/cards/server/tables/ServerWeekComparisonCard';
 import NetworkOnlineActivityGraphsCard from '../../components/cards/server/graphs/NetworkOnlineActivityGraphsCard';
-import ExtendableRow from '../../components/layout/extension/ExtendableRow.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
-import { RecentPlayersCard } from '../../components/cards/network/RecentPlayersCard.tsx';
+import ExtendableRow from '../../components/layout/extension/ExtendableRow';
+import { useAuth } from '../../hooks/authenticationHook';
+import { RecentPlayersCard } from '../../components/cards/network/RecentPlayersCard';
 
 const NetworkOverview = () => {
     const { hasPermission, hasChildPermission } = useAuth();

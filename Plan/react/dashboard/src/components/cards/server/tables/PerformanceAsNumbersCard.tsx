@@ -72,7 +72,7 @@ const NoDataAlert = ({ servers }: NoDataProps) => {
 };
 
 type Props = {
-    servers: Server[];
+    servers: (Pick<Server, 'serverUUID'> & Partial<Server>)[];
 };
 
 const PerformanceAsNumbersCard = ({ servers }: Props) => {

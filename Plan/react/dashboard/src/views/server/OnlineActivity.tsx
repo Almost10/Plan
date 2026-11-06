@@ -1,11 +1,11 @@
 import React from 'react';
 import { Col } from 'react-bootstrap';
 import OnlineActivityGraphsCard from '../../components/cards/server/graphs/OnlineActivityGraphsCard';
-import OnlineActivityAsNumbersCard from '../../components/cards/server/tables/OnlineActivityAsNumbersCard.tsx';
+import OnlineActivityAsNumbersCard from '../../components/cards/server/tables/OnlineActivityAsNumbersCard';
 import OnlineActivityInsightsCard from '../../components/cards/server/insights/OnlineActivityInsightsCard';
-import LoadIn from '../../components/animation/LoadIn.tsx';
-import ExtendableRow from '../../components/layout/extension/ExtendableRow.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
+import LoadIn from '../../components/animation/LoadIn';
+import ExtendableRow from '../../components/layout/extension/ExtendableRow';
+import { useAuth } from '../../hooks/authenticationHook';
 
 const OnlineActivity = () => {
     const { hasPermission, hasChildPermission } = useAuth();

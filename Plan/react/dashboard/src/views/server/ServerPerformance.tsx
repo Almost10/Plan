@@ -1,15 +1,15 @@
 import React from 'react';
-import LoadIn from '../../components/animation/LoadIn.tsx';
+import LoadIn from '../../components/animation/LoadIn';
 import { Col } from 'react-bootstrap';
 import { useParams } from 'react-router';
-import PerformanceAsNumbersCard from '../../components/cards/server/tables/PerformanceAsNumbersCard.tsx';
-import ExtendableRow from '../../components/layout/extension/ExtendableRow.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
-import { GraphSeriesCard } from '../../components/cards/server/graphs/GraphSeriesCard.tsx';
+import PerformanceAsNumbersCard from '../../components/cards/server/tables/PerformanceAsNumbersCard';
+import ExtendableRow from '../../components/layout/extension/ExtendableRow';
+import { useAuth } from '../../hooks/authenticationHook';
+import { GraphSeriesCard } from '../../components/cards/server/graphs/GraphSeriesCard';
 
 const ServerPerformance = () => {
     const { hasPermission, hasChildPermission } = useAuth();
-    const { identifier } = useParams();
+    const { identifier } = useParams() as { identifier: string };
 
     const seeGraphs = hasChildPermission('page.server.performance.graphs');
     const seeOverview = hasPermission('page.server.performance.overview');

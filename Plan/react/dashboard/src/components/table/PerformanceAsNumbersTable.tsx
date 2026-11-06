@@ -21,7 +21,7 @@ import { OnlineActivityType } from '../../dataHooks/model/GenericFilter';
 import { Server } from '../../hooks/model/Metadata';
 
 type Props = {
-    servers: Server[];
+    servers: (Pick<Server, 'serverUUID'> & Partial<Server>)[];
 };
 
 const PerformanceAsNumbersTable = ({ servers }: Props) => {

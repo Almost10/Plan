@@ -13,16 +13,16 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import OnlineActivityCard from '../../components/cards/server/graphs/OnlineActivityCard';
-import ServerAsNumbersCard from '../../components/cards/server/values/ServerAsNumbersCard.tsx';
-import ServerWeekComparisonCard from '../../components/cards/server/tables/ServerWeekComparisonCard.tsx';
-import LoadIn from '../../components/animation/LoadIn.tsx';
-import ExtendableRow from '../../components/layout/extension/ExtendableRow.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
+import ServerAsNumbersCard from '../../components/cards/server/values/ServerAsNumbersCard';
+import ServerWeekComparisonCard from '../../components/cards/server/tables/ServerWeekComparisonCard';
+import LoadIn from '../../components/animation/LoadIn';
+import ExtendableRow from '../../components/layout/extension/ExtendableRow';
+import { useAuth } from '../../hooks/authenticationHook';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { QueryDatapoint } from '../../components/datapoint/QueryDatapoint.tsx';
-import { DatapointType } from '../../dataHooks/model/datapoint/Datapoint.ts';
-import { MS_WEEK } from '../../util/format/useDateFormatter.ts';
-import { GenericFilterContextProvider } from '../../dataHooks/genericFilterContextHook.tsx';
+import { QueryDatapoint } from '../../components/datapoint/QueryDatapoint';
+import { DatapointType } from '../../dataHooks/model/datapoint/Datapoint';
+import { MS_WEEK } from '../../util/format/useDateFormatter';
+import { GenericFilterContextProvider } from '../../dataHooks/genericFilterContextHook';
 import { useDatapointQuery } from '../../dataHooks/useDatapointQuery';
 
 const Last7DaysCard = () => {
