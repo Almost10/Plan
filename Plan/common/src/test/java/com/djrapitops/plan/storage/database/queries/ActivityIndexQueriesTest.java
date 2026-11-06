@@ -19,6 +19,7 @@ package com.djrapitops.plan.storage.database.queries;
 import com.djrapitops.plan.delivery.domain.TablePlayer;
 import com.djrapitops.plan.delivery.domain.mutators.ActivityIndex;
 import com.djrapitops.plan.delivery.domain.mutators.SessionsMutator;
+import com.djrapitops.plan.gathering.domain.DataMap;
 import com.djrapitops.plan.gathering.domain.FinishedSession;
 import com.djrapitops.plan.storage.database.DatabaseTestPreparer;
 import com.djrapitops.plan.storage.database.queries.analysis.ActivityIndexQueries;
@@ -258,10 +259,14 @@ public interface ActivityIndexQueriesTest extends DatabaseTestPreparer {
     default void countRegularPlayers() {
         storeSessions(_ -> true);
         long playtimeThreshold = TimeUnit.MILLISECONDS.toMillis(1L);
-        Integer expected = 1; // All players are very active
-        FinishedSession randomSession = RandomData.randomSession(serverUUID(), worlds, System.currentTimeMillis() - TimeUnit.HOURS.toMillis(1L), playerUUID, player2UUID);
-        db().executeTransaction(new StoreSessionTransaction(randomSession));
-        Integer result = db().query(ActivityIndexQueries.fetchRegularPlayerCount(System.currentTimeMillis(), serverUUID(), playtimeThreshold));
+        Integer expected = 1;
+        long date = System.currentTimeMillis();
+        for (int week = 0; week < 3; week++) {
+            long start = date - TimeUnit.DAYS.toMillis(7L * week) - TimeUnit.HOURS.toMillis(1L);
+            FinishedSession session = new FinishedSession(playerUUID, serverUUID(), start, start + 1000, 0, new DataMap());
+            db().executeTransaction(new StoreSessionTransaction(session)).join();
+        }
+        Integer result = db().query(ActivityIndexQueries.fetchRegularPlayerCount(date, serverUUID(), playtimeThreshold));
         assertEquals(expected, result);
     }
 

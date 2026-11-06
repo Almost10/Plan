@@ -18,6 +18,7 @@ package com.djrapitops.plan.delivery.export;
 
 import com.djrapitops.plan.gathering.domain.DataMap;
 import com.djrapitops.plan.gathering.domain.FinishedSession;
+import com.djrapitops.plan.gathering.domain.builders.TPSBuilder;
 import com.djrapitops.plan.identification.ServerUUID;
 import com.djrapitops.plan.storage.database.Database;
 import com.djrapitops.plan.storage.database.queries.objects.ServerQueries;
@@ -134,11 +135,21 @@ public class ExportTestUtilities {
     }
 
     static void saveServerData(Database database, ServerUUID serverUUID) {
-        RandomData.dateOrderedTPS(System.currentTimeMillis() - TimeUnit.HOURS.toMillis(12)).forEach(tps -> database.executeTransaction(new TPSStoreTransaction(serverUUID, tps)).join());
-        RandomData.dateOrderedTPS(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(8)).forEach(tps -> database.executeTransaction(new TPSStoreTransaction(serverUUID, tps)).join());
-        RandomData.dateOrderedTPS(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(15)).forEach(tps -> database.executeTransaction(new TPSStoreTransaction(serverUUID, tps)).join());
-        RandomData.dateOrderedTPS(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(22)).forEach(tps -> database.executeTransaction(new TPSStoreTransaction(serverUUID, tps)).join());
-        RandomData.dateOrderedTPS(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(29)).forEach(tps -> database.executeTransaction(new TPSStoreTransaction(serverUUID, tps)).join());
+        long now = System.currentTimeMillis();
+        for (int days : new int[]{0, 7, 14, 21, 28}) {
+            long date = now - TimeUnit.DAYS.toMillis(days) - TimeUnit.HOURS.toMillis(12);
+            for (int players = 0; players <= 1; players++) {
+                var tps = TPSBuilder.get()
+                        .date(date + TimeUnit.MINUTES.toMillis(players))
+                        .tps(17.0).playersOnline(players)
+                        .usedCPU(25.0).usedMemory(1024)
+                        .entities(100).chunksLoaded(10).freeDiskSpace(1024)
+                        .msptAverage(25.0).mspt95thPercentile(30.0)
+                        .msptJitterAverage(1.0).msptJitterMax(2.0)
+                        .toTPS();
+                database.executeTransaction(new TPSStoreTransaction(serverUUID, tps)).join();
+            }
+        }
     }
 
     public static List<String> getEndpointsToTest(ServerUUID serverUUID) {
