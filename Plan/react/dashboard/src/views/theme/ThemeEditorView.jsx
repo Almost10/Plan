@@ -8,8 +8,8 @@ import TextInput from '../../components/input/TextInput.tsx';
 import { ColorEditContextProvider } from '../../hooks/context/colorEditContextHook';
 import ColorSection from '../../components/theme/ColorSection';
 import ColorEditForm from '../../components/theme/ColorEditForm';
-import UseCaseSection from '../../components/theme/UseCaseSection.jsx';
-import ExampleSection from '../../components/theme/ExampleSection.jsx';
+import UseCaseSection from '../../components/theme/UseCaseSection';
+import ExampleSection from '../../components/theme/ExampleSection';
 import {
     faExclamationCircle,
     faFileSignature,

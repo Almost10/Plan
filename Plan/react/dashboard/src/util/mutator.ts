@@ -51,7 +51,10 @@ export const mergeUseCases = (
     return merged;
 };
 
-export const addToObject = (base: Record<string, unknown>, toAdd?: UseCase) => {
+export const addToObject = (
+    base: Record<string, unknown>,
+    toAdd?: UseCase | Record<string, unknown>,
+) => {
     if (!toAdd) return base;
     Object.entries(toAdd).forEach(([key, value]) => {
         base[key] = value;

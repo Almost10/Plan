@@ -1,18 +1,45 @@
 import React, { useEffect, useRef } from 'react';
-import ColorDropdown from './ColorDropdown.jsx';
+import ColorDropdown from './ColorDropdown';
 import ColorMultiSelect from './ColorMultiSelect';
 import { FontAwesomeIcon as Fa } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useMinHeightContext } from '../../hooks/context/minHeightContextHook';
+import {
+    ColorPropertyMap,
+    UseCase as UseCaseValue,
+    UseCaseMap,
+} from './model/ThemeConfig';
 
-export const formatLabel = (key) => {
+type HoverChangeHandler = (
+    id: string,
+    state: 'enter' | 'exit',
+    isNightMode: boolean,
+) => void;
+type UseCaseChangeHandler = (value: string | string[], path: string[]) => void;
+type RemoveOverrideHandler = (path: string[]) => void;
+
+export const formatLabel = (key: string) => {
     return key
         .replace(/([A-Z])/g, ' $1')
         .replace(/^./, (str) => str.toUpperCase())
         .trim();
 };
 
-const SectionLabel = ({ level, label, id, isNightMode, onHoverChange }) => (
+type SectionLabelProps = {
+    level: number;
+    label: string;
+    id: string;
+    isNightMode: boolean;
+    onHoverChange: HoverChangeHandler;
+};
+
+const SectionLabel = ({
+    level,
+    label,
+    id,
+    isNightMode,
+    onHoverChange,
+}: SectionLabelProps) => (
     <tr>
         <td colSpan={2}>
             {level === 0 && label !== 'Reference Colors' && <hr />}
@@ -29,7 +56,12 @@ const SectionLabel = ({ level, label, id, isNightMode, onHoverChange }) => (
     </tr>
 );
 
-const UseCaseLabel = ({ level, label }) => (
+type UseCaseLabelProps = {
+    level: number;
+    label: string;
+};
+
+const UseCaseLabel = ({ level, label }: UseCaseLabelProps) => (
     <td
         style={{
             paddingBottom: '8px',
@@ -40,7 +72,15 @@ const UseCaseLabel = ({ level, label }) => (
     </td>
 );
 
-const NightModeRemovalButton = ({ onRemove, path }) => (
+type NightModeRemovalButtonProps = {
+    onRemove?: RemoveOverrideHandler;
+    path: string[];
+};
+
+const NightModeRemovalButton = ({
+    onRemove,
+    path,
+}: NightModeRemovalButtonProps) => (
     <button
         className='d-flex align-items-center px-1 col-red'
         onClick={() => onRemove?.(path)}
@@ -48,6 +88,16 @@ const NightModeRemovalButton = ({ onRemove, path }) => (
         <Fa icon={faTimes} />
     </button>
 );
+
+type UseCaseDropdownProps = {
+    id: string;
+    colors: ColorPropertyMap;
+    value: string;
+    onChange: (value: string) => void;
+    label: string;
+    onRemoveOverride?: RemoveOverrideHandler;
+    path?: string[];
+};
 
 const UseCaseDropdown = ({
     id,
@@ -57,7 +107,7 @@ const UseCaseDropdown = ({
     label,
     onRemoveOverride,
     path,
-}) => (
+}: UseCaseDropdownProps) => (
     <td style={{ paddingBottom: '8px', width: '100%' }}>
         <div
             style={{
@@ -78,12 +128,25 @@ const UseCaseDropdown = ({
             {onRemoveOverride && (
                 <NightModeRemovalButton
                     onRemove={onRemoveOverride}
-                    path={path}
+                    path={path!}
                 />
             )}
         </div>
     </td>
 );
+
+type UseCaseArraySelectorProps = {
+    value: string[];
+    isNightMode: boolean;
+    baseValue?: UseCaseValue | null;
+    id: string;
+    onHoverChange: HoverChangeHandler;
+    level: number;
+    path: string[];
+    colors: ColorPropertyMap;
+    onChange: UseCaseChangeHandler;
+    onRemoveOverride?: RemoveOverrideHandler;
+};
 
 const UseCaseArraySelector = ({
     value,
@@ -96,9 +159,9 @@ const UseCaseArraySelector = ({
     colors,
     onChange,
     onRemoveOverride,
-}) => {
-    const ref = useRef();
-    const { registerMinHeight, unregisterMinHeight } = useMinHeightContext();
+}: UseCaseArraySelectorProps) => {
+    const ref = useRef<HTMLDivElement>(null);
+    const { registerMinHeight, unregisterMinHeight } = useMinHeightContext()!;
     const selector = `selector-${path.join('_')}`;
     const selectedNames = value || [];
 
@@ -110,7 +173,7 @@ const UseCaseArraySelector = ({
                 setTimeout(() => {
                     registerMinHeight(
                         selector,
-                        ref.current.offsetHeight,
+                        ref.current!.offsetHeight,
                         isNightMode,
                         selectedNames.length,
                     );
@@ -169,6 +232,17 @@ const UseCaseArraySelector = ({
         </tr>
     );
 };
+type Props = {
+    path: string[];
+    value: UseCaseValue;
+    onChange: UseCaseChangeHandler;
+    onHoverChange: HoverChangeHandler;
+    colors: ColorPropertyMap;
+    isNightMode: boolean;
+    baseValue?: UseCaseValue | null;
+    onRemoveOverride?: RemoveOverrideHandler;
+};
+
 const UseCase = ({
     path,
     value,
@@ -178,7 +252,7 @@ const UseCase = ({
     isNightMode,
     baseValue,
     onRemoveOverride,
-}) => {
+}: Props) => {
     const level = Math.max(0, path.length - 1);
     const id = path.join('.');
 
@@ -249,7 +323,9 @@ const UseCase = ({
                     onHoverChange={onHoverChange}
                     colors={colors}
                     isNightMode={isNightMode}
-                    baseValue={baseValue?.[key]}
+                    baseValue={
+                        (baseValue as UseCaseMap | null | undefined)?.[key]
+                    }
                     onRemoveOverride={onRemoveOverride}
                 />
             ))}

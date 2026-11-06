@@ -6,15 +6,16 @@ import {
     nameToContrastCssVariable,
     nameToCssVariable,
 } from '../../util/colors';
+import { ColorPropertyMap } from './model/ThemeConfig';
 
-const useMenuPlacement = (isOpen) => {
-    const selectedItemRef = useRef(null);
-    const dropdownMenuRef = useRef(null);
+const useMenuPlacement = (isOpen: boolean) => {
+    const selectedItemRef = useRef<HTMLButtonElement>(null);
+    const dropdownMenuRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         if (isOpen && selectedItemRef.current && dropdownMenuRef.current) {
             setTimeout(() => {
-                const menuElement = dropdownMenuRef.current;
-                const selectedElement = selectedItemRef.current;
+                const menuElement = dropdownMenuRef.current!;
+                const selectedElement = selectedItemRef.current!;
                 const isDropup =
                     menuElement.getAttribute('data-popper-placement') ===
                     'top-start';
@@ -33,7 +34,15 @@ const useMenuPlacement = (isOpen) => {
     return { selectedItemRef, dropdownMenuRef };
 };
 
-const ColorDropdown = ({ id, colors, value, onChange, label }) => {
+type Props = {
+    id: string;
+    colors: ColorPropertyMap;
+    value: string;
+    onChange?: (value: string) => void;
+    label: string;
+};
+
+const ColorDropdown = ({ id, colors, value, onChange, label }: Props) => {
     const { t } = useTranslation();
     const selectedName = cssVariableToName(value) || Object.keys(colors)[0];
     const isTextColor = selectedName.includes('text') || label.includes('Text');

@@ -1,9 +1,9 @@
-import React, { PropsWithChildren, useState } from 'react';
+import React, { PropsWithChildren, ReactNode, useState } from 'react';
 import style from './CollapseWithButton.module.scss';
 
 type Props = {
-    title: string;
-    coverToggle: boolean;
+    title: ReactNode;
+    coverToggle?: boolean;
     open?: boolean;
     disabled?: boolean;
 } & PropsWithChildren;

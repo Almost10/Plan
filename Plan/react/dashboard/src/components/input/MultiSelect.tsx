@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { CSSProperties, useMemo } from 'react';
 import Select from 'react-select';
 import { useTranslation } from 'react-i18next';
 
@@ -7,7 +7,7 @@ type Props<T> = {
     selectedIndexes: number[];
     setSelectedIndexes: (indexes: number[]) => void;
     className?: string;
-    style?: CSSStyleProperties;
+    style?: CSSProperties;
 };
 
 function MultiSelect<T>({

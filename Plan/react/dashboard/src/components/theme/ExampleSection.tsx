@@ -1,38 +1,46 @@
-import { SidebarUseCase } from './usecase/SidebarUseCase.tsx';
-import InfoBoxUseCase from './usecase/InfoBoxUseCase.tsx';
-import { ChartLoader } from '../navigation/Loader.tsx';
+import { SidebarUseCase } from './usecase/SidebarUseCase';
+import InfoBoxUseCase from './usecase/InfoBoxUseCase';
+import { ChartLoader } from '../navigation/Loader';
 import TrendUseCase from './usecase/TrendUseCase';
-import CardUseCase from './usecase/CardUseCase.tsx';
+import CardUseCase from './usecase/CardUseCase';
 import CalendarUseCase from './usecase/CalendarUseCase';
-import DataUseCase from './usecase/DataUseCase.tsx';
+import DataUseCase from './usecase/DataUseCase';
 import { faChartLine, faServer } from '@fortawesome/free-solid-svg-icons';
-import DataPlayUseCase from './usecase/DataPlayUseCase.tsx';
-import DataPlayersUseCase from './usecase/DataPlayersUseCase.tsx';
-import DataPerformanceUseCase from './usecase/DataPerformanceUseCase.tsx';
-import DataCalculatedUseCase from './usecase/DataCalculatedUseCase.tsx';
-import DataPlayerVersusUseCase from './usecase/DataPlayerVersusUseCase.tsx';
-import DataPlayerStatusUseCase from './usecase/DataPlayerStatusUseCase.tsx';
-import React from 'react';
+import DataPlayUseCase from './usecase/DataPlayUseCase';
+import DataPlayersUseCase from './usecase/DataPlayersUseCase';
+import DataPerformanceUseCase from './usecase/DataPerformanceUseCase';
+import DataCalculatedUseCase from './usecase/DataCalculatedUseCase';
+import DataPlayerVersusUseCase from './usecase/DataPlayerVersusUseCase';
+import DataPlayerStatusUseCase from './usecase/DataPlayerStatusUseCase';
+import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import CollapseWithButton from '../layout/CollapseWithButton.tsx';
+import CollapseWithButton from '../layout/CollapseWithButton';
 import FormsUseCase from './usecase/FormsUseCase.jsx';
 import { addToObject } from '../../util/mutator';
 import { graphUseCases } from './usecase/GraphUseCases.jsx';
-import { TableUseCase } from './usecase/TableUseCases.tsx';
-import { formatLabel } from './UseCase.jsx';
-import TabsUseCase from './usecase/TabsUseCase.tsx';
-import DataPluginsUseCase from './usecase/DataPluginsUseCase.tsx';
+import { TableUseCase } from './usecase/TableUseCases';
+import { formatLabel } from './UseCase';
+import TabsUseCase from './usecase/TabsUseCase';
+import DataPluginsUseCase from './usecase/DataPluginsUseCase';
 
-const findExample = (path, examples) => {
+const findExample = (
+    path: string | undefined,
+    examples: Record<string, ReactNode>,
+): ReactNode => {
     if (!path?.length) return undefined;
     const found = examples[path];
     if (found) return found;
     return findExample(path.split('.').slice(0, -1).join('.'), examples);
 };
 
-const ExampleSection = ({ displayedItem, className }) => {
+type Props = {
+    displayedItem?: string;
+    className?: string;
+};
+
+const ExampleSection = ({ displayedItem, className }: Props) => {
     const { t } = useTranslation();
-    const examples = {
+    const examples: Record<string, ReactNode> = {
         sidebar: <SidebarUseCase />,
         'layout.background': <SidebarUseCase />,
         'layout.title': <SidebarUseCase />,

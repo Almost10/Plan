@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mergeUseCases } from '../../util/mutator';
-import UseCase from './UseCase.jsx';
+import UseCase from './UseCase';
+import { ColorPropertyMap, UseCaseMap } from './model/ThemeConfig';
+
+type Props = {
+    useCases: UseCaseMap;
+    onHoverChange: ComponentProps<typeof UseCase>['onHoverChange'];
+    colors: ColorPropertyMap;
+    baseUseCases?: UseCaseMap | null;
+    isNightMode?: boolean;
+    updateUseCase: ComponentProps<typeof UseCase>['onChange'];
+    removeOverride?: (path: string[]) => void;
+};
 
 const UseCaseSection = ({
     useCases,
@@ -11,7 +22,7 @@ const UseCaseSection = ({
     isNightMode = false,
     updateUseCase,
     removeOverride,
-}) => {
+}: Props) => {
     const { t } = useTranslation();
     // For night mode, we need to merge the base use cases with overrides
     const mergedUseCases =
