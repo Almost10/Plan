@@ -375,7 +375,7 @@ const DiscardButton = () => {
 
 const AddGroupBody = ({ groups, reloadGroupNames }) => {
     const { t } = useTranslation();
-    const [value, setValue] = useState(undefined);
+    const [value, setValue] = useState('');
     const { addAlert } = useAlertPopupContext();
 
     const isInvalid = (newValue) =>
