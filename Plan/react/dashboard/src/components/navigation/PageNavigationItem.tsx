@@ -1,29 +1,45 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import { faCompass } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon as Fa } from '@fortawesome/react-fontawesome';
 import { InputGroup } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router';
-import { useMetadata } from '../../hooks/metadataHook.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
+import { useMetadata } from '../../hooks/metadataHook';
+import { useAuth } from '../../hooks/authenticationHook';
+import { Metadata } from '../../hooks/model/Metadata';
 
-const PageNavigationItem = ({ page }) => {
+type NavigationItem = {
+    id: string;
+    displayName: string;
+    href: string;
+    permission?: string;
+    authRequired?: boolean;
+};
+
+type Props = {
+    page?: string;
+};
+
+const PageNavigationItem = ({ page }: Props) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
     const { authRequired, loggedIn, user, hasPermission } = useAuth();
     const metadata = useMetadata();
-    const [currentPage, setCurrentPage] = useState(undefined);
-    const [items, setItems] = useState([]);
+    const [currentPage, setCurrentPage] = useState<string | undefined>(
+        undefined,
+    );
+    const [items, setItems] = useState<NavigationItem[]>([]);
 
     useEffect(() => {
-        const networkMetadata = metadata?.networkMetadata;
+        const networkMetadata = (metadata as Partial<Metadata>)
+            ?.networkMetadata;
         if (networkMetadata?.servers) {
             const hasProxy = networkMetadata.servers.filter(
                 (server) => server.proxy,
             ).length;
 
-            let newItems = [
+            let newItems: NavigationItem[] = [
                 {
                     id: 'players',
                     displayName: t('html.label.players'),
@@ -123,7 +139,7 @@ const PageNavigationItem = ({ page }) => {
         page,
     ]);
 
-    const getSharedPrefix = (one, two) => {
+    const getSharedPrefix = (one: string, two: string) => {
         let i = 0;
         while (one[i] && two[i] && one[i] === two[i]) {
             i++;
@@ -131,10 +147,10 @@ const PageNavigationItem = ({ page }) => {
         return one.substring(0, i);
     };
 
-    const onSelect = ({ target }) => {
+    const onSelect = ({ target }: ChangeEvent<HTMLSelectElement>) => {
         const selected = target.value;
         const selectedItem = items.find((item) => item.id === selected);
-        const selectedHref = selectedItem.href;
+        const selectedHref = selectedItem!.href;
         const currentHref = document.location.pathname + document.location.hash;
 
         const sharedPrefix = getSharedPrefix(selectedHref, currentHref);

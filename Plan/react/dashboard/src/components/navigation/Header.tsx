@@ -1,5 +1,6 @@
-import { useMetadata } from '../../hooks/metadataHook.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
+import { ChangeEvent, CSSProperties } from 'react';
+import { useMetadata } from '../../hooks/metadataHook';
+import { useAuth } from '../../hooks/authenticationHook';
 import { FontAwesomeIcon as Fa } from '@fortawesome/react-fontawesome';
 import {
     faBars,
@@ -9,18 +10,18 @@ import {
     faPalette,
     faSyncAlt,
 } from '@fortawesome/free-solid-svg-icons';
-import { useTheme } from '../../hooks/themeHook.tsx';
+import { useTheme } from '../../hooks/themeHook';
 import { Dropdown } from 'react-bootstrap';
 import { localeService } from '../../service/localeService';
 import { useTranslation } from 'react-i18next';
-import { useNavigation } from '../../hooks/navigationHook.tsx';
+import { useNavigation } from '../../hooks/navigationHook';
 import { baseAddress, staticSite } from '../../service/backendConfiguration';
-import FormattedDate from '../text/FormattedDate.tsx';
+import FormattedDate from '../text/FormattedDate';
 
 const LanguageSelector = () => {
     const languages = localeService.getLanguages();
 
-    const onSelect = ({ target }) => {
+    const onSelect = ({ target }: ChangeEvent<HTMLSelectElement>) => {
         localeService.loadLocale(target.value);
     };
 
@@ -40,7 +41,13 @@ const LanguageSelector = () => {
     );
 };
 
-const Header = ({ page, tab, hideUpdater }) => {
+type Props = {
+    page: string;
+    tab?: string;
+    hideUpdater?: boolean;
+};
+
+const Header = ({ page, tab, hideUpdater }: Props) => {
     const { authRequired, user } = useAuth();
     const { toggleColorChooser } = useTheme();
     const { t } = useTranslation();
@@ -50,7 +57,7 @@ const Header = ({ page, tab, hideUpdater }) => {
 
     const { getPlayerHeadImageUrl } = useMetadata();
     const headImageUrl = user
-        ? getPlayerHeadImageUrl(user.playerName, user.playerUUID)
+        ? getPlayerHeadImageUrl(user.playerName!, user.playerUUID!)
         : undefined;
     return (
         <nav className='nav-header nav mt-3 align-items-center justify-content-between container-fluid'>
@@ -79,7 +86,7 @@ const Header = ({ page, tab, hideUpdater }) => {
                             </span>
                         )}{' '}
                         <span className='refresh-time'>
-                            <FormattedDate date={lastUpdate.date} react />
+                            <FormattedDate date={lastUpdate.date!} react />
                         </span>
                     </div>
                 </>
@@ -94,9 +101,11 @@ const Header = ({ page, tab, hideUpdater }) => {
             <Dropdown className='nav-item'>
                 <Dropdown.Toggle
                     variant=''
-                    style={{
-                        '--bs-btn-color': 'var(--color-forms-input-text)',
-                    }}>
+                    style={
+                        {
+                            '--bs-btn-color': 'var(--color-forms-input-text)',
+                        } as CSSProperties
+                    }>
                     {authRequired && user ? (
                         <>
                             <span className='me-1 login-username'>
