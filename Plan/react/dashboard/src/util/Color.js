@@ -108,17 +108,8 @@ export class Color {
         return rgbToHsl(this.toRgbArray());
     }
 
-    toHsvString() {
-        return hsvToString(this.toHsvArray());
-    }
-
     toHsvArray() {
         return hslToHsv(this.toHslArray());
-    }
-
-    toHsvaArray() {
-        const rgba = this.toRgbaArray();
-        return [...this.toHslArray(), rgba[3]];
     }
 
     reduceSaturation(reductionPercentage) {
