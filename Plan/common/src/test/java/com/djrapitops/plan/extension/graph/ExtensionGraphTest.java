@@ -39,9 +39,11 @@ import com.djrapitops.plan.storage.database.transactions.commands.StoreWebUserTr
 import com.djrapitops.plan.storage.database.transactions.events.StoreServerPlayerTransaction;
 import com.djrapitops.plan.storage.database.transactions.init.RemoveOldExtensionsTransaction;
 import com.djrapitops.plan.storage.database.transactions.webuser.StoreWebGroupTransaction;
+import com.djrapitops.plan.storage.file.PlanFiles;
 import com.djrapitops.plan.utilities.PassEncryptUtil;
 import extension.FullSystemExtension;
 import extension.SeleniumExtension;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -54,6 +56,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import utilities.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -93,8 +96,9 @@ class ExtensionGraphTest {
         system.enable();
 
         User user = registerUser(system.getDatabaseSystem().getDatabase(), WebPermission.ACCESS, WebPermission.PAGE, WebPermission.DATA);
-        driver.get("https://localhost:" + TEST_PORT_NUMBER + "/");
+        driver.get("https://localhost:" + TEST_PORT_NUMBER + "/players");
         login(driver, user);
+        SeleniumExtension.waitForElementToBeVisible(By.id("players-table"), driver);
     }
 
     @AfterAll
@@ -324,13 +328,14 @@ class ExtensionGraphTest {
     }
 
     @BeforeEach
-    void setUp(Database database, ServerUUID serverUUID, ChromeDriver driver) {
+    void setUp(Database database, ServerUUID serverUUID, PlanFiles files) throws IOException {
+        FileUtils.cleanDirectory(files.getJSONStorageDirectory().toFile());
         storePlayer(database, serverUUID);
     }
 
     @AfterEach
     void tearDownTest(WebDriver driver, Database database, PlanConfig config, ServerUUID serverUUID) {
-        SeleniumExtension.newTab(driver);
+        driver.get("about:blank");
         removeExtensionData(database, config, serverUUID);
     }
 
@@ -356,6 +361,7 @@ class ExtensionGraphTest {
             // Player leave calls the sampler
             assertDoesNotThrow(() -> extensionService.updatePlayerValues(TestConstants.PLAYER_ONE_UUID, TestConstants.PLAYER_ONE_NAME, CallEvents.PLAYER_LEAVE));
             TestErrorLogger.throwErrors(true);
+            DBPreparer.awaitUntilTransactionsComplete(database);
 
             String serverName = database.query(ServerQueries.fetchServerMatchingIdentifier(serverUUID)).map(Server::getIdentifiableName).orElse(serverUUID.toString())
                     .replace(" ", "%20");
@@ -363,7 +369,7 @@ class ExtensionGraphTest {
             driver.get(address);
 
             String element = "plan_extension_graph_playergraphextension_playergraph";
-            SeleniumExtension.waitForElementToBeVisible(By.id("player-plugin-data"), driver);
+            SeleniumExtension.waitForElementToBeVisible(By.id(element), driver);
             assertAll(
                     () -> assertDoesNotThrow(() -> driver.findElement(By.id(element)), () -> "Did not see #" + element + " at " + address),
                     () -> assertNoLogs(driver, address)
@@ -376,7 +382,7 @@ class ExtensionGraphTest {
     @DisplayName("Server extension graph functionality")
     @ParameterizedTest(name = "{0}")
     @MethodSource("serverTestCases")
-    void serverGraphVisible(String testCase, TestExtensions.ServerGraphExtension graphExtension, PlanConfig config, ServerUUID serverUUID, ExtensionSvc extensionService, ChromeDriver driver) {
+    void serverGraphVisible(String testCase, TestExtensions.ServerGraphExtension graphExtension, PlanConfig config, Database database, ServerUUID serverUUID, ExtensionSvc extensionService, ChromeDriver driver) {
         try {
             TestErrorLogger.throwErrors(!testCase.contains("throws"));
             config.getExtensionSettings().setEnabled("ServerGraphExtension", true);
@@ -390,12 +396,13 @@ class ExtensionGraphTest {
                     .forEach(ServerGraphSampler::run)
             );
             TestErrorLogger.throwErrors(true);
+            DBPreparer.awaitUntilTransactionsComplete(database);
 
             String address = "https://localhost:" + TEST_PORT_NUMBER + "/server/" + serverUUID + "/plugins-overview";
             driver.get(address);
 
             String element = "plan_extension_graph_servergraphextension_servergraph";
-            SeleniumExtension.waitForElementToBeVisible(By.id("server-plugin-data"), driver);
+            SeleniumExtension.waitForElementToBeVisible(By.id(element), driver);
             assertAll(
                     () -> assertDoesNotThrow(() -> driver.findElement(By.id(element)), () -> "Did not see #" + element + " at " + address),
                     () -> assertNoLogs(driver, address)
