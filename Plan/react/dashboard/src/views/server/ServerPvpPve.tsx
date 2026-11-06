@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import PvpPveAsNumbersCard from '../../components/cards/server/tables/PvpPveAsNumbersCard';
 import { Col } from 'react-bootstrap';
 import PvpKillsTableCard from '../../components/cards/common/PvpKillsTableCard';
@@ -6,10 +6,20 @@ import PvpPveInsightsCard from '../../components/cards/server/insights/PvpPveIns
 import { useParams } from 'react-router';
 import { useDataRequest } from '../../hooks/dataFetchHook';
 import { fetchKills, fetchPvpPve } from '../../service/serverService';
-import ErrorView from '../ErrorView.tsx';
-import LoadIn from '../../components/animation/LoadIn.tsx';
-import ExtendableRow from '../../components/layout/extension/ExtendableRow.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
+import ErrorView from '../ErrorView';
+import LoadIn from '../../components/animation/LoadIn';
+import ExtendableRow from '../../components/layout/extension/ExtendableRow';
+import { useAuth } from '../../hooks/authenticationHook';
+import { PlanDataResponse } from '../../service/PlanResponse';
+
+type PvpPveData = {
+    numbers: ComponentProps<typeof PvpPveAsNumbersCard>['killData'];
+    insights: ComponentProps<typeof PvpPveInsightsCard>['data'];
+};
+
+type KillsData = {
+    playerKills: ComponentProps<typeof PvpKillsTableCard>['playerKills'];
+};
 
 const ServerPvpPve = () => {
     const { hasPermission } = useAuth();
@@ -22,12 +32,12 @@ const ServerPvpPve = () => {
         fetchPvpPve,
         [identifier],
         seeKillNumbers,
-    );
+    ) as unknown as PlanDataResponse<PvpPveData>;
     const { data: killsData, loadingError: killsLoadingError } = useDataRequest(
         fetchKills,
         [identifier],
         seeKills,
-    );
+    ) as unknown as PlanDataResponse<KillsData>;
 
     if (loadingError) return <ErrorView error={loadingError} />;
     if (killsLoadingError) return <ErrorView error={killsLoadingError} />;

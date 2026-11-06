@@ -1,13 +1,21 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { useDataRequest } from '../../hooks/dataFetchHook';
 import { useParams } from 'react-router';
 import { fetchAllowlistBounces } from '../../service/serverService';
-import ErrorView from '../ErrorView.tsx';
+import ErrorView from '../ErrorView';
 import { Col } from 'react-bootstrap';
-import LoadIn from '../../components/animation/LoadIn.tsx';
-import ExtendableRow from '../../components/layout/extension/ExtendableRow.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
+import LoadIn from '../../components/animation/LoadIn';
+import ExtendableRow from '../../components/layout/extension/ExtendableRow';
+import { useAuth } from '../../hooks/authenticationHook';
 import AllowlistBounceTableCard from '../../components/cards/server/tables/AllowlistBounceTableCard';
+import { PlanDataResponse } from '../../service/PlanResponse';
+
+type AllowlistData = {
+    allowlistBounces: ComponentProps<
+        typeof AllowlistBounceTableCard
+    >['bounces'];
+    lastSeenByUUID: ComponentProps<typeof AllowlistBounceTableCard>['lastSeen'];
+};
 
 const ServerAllowList = () => {
     const { hasPermission } = useAuth();
@@ -18,7 +26,7 @@ const ServerAllowList = () => {
         fetchAllowlistBounces,
         [identifier],
         seeBounce,
-    );
+    ) as unknown as PlanDataResponse<AllowlistData>;
 
     if (loadingError) return <ErrorView error={loadingError} />;
 

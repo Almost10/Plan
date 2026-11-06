@@ -2,41 +2,47 @@ import { Col } from 'react-bootstrap';
 import React from 'react';
 import PlayerbaseDevelopmentCard from '../../components/cards/server/graphs/PlayerbaseDevelopmentCard';
 import CurrentPlayerbaseCard from '../../components/cards/server/graphs/CurrentPlayerbaseCard';
+import { useParams } from 'react-router';
 import { useDataRequest } from '../../hooks/dataFetchHook';
-import { ErrorViewCard } from '../ErrorView.tsx';
+import { fetchPlayerbaseOverview } from '../../service/serverService';
+import { ErrorViewCard } from '../ErrorView';
 import PlayerbaseTrendsCard from '../../components/cards/server/tables/PlayerbaseTrendsCard';
 import PlayerbaseInsightsCard from '../../components/cards/server/insights/PlayerbaseInsightsCard';
-import LoadIn from '../../components/animation/LoadIn.tsx';
-import { fetchNetworkPlayerbaseOverview } from '../../service/networkService';
-import ExtendableRow from '../../components/layout/extension/ExtendableRow.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
+import LoadIn from '../../components/animation/LoadIn';
+import ExtendableRow from '../../components/layout/extension/ExtendableRow';
+import { useAuth } from '../../hooks/authenticationHook';
+import { PlanDataResponse } from '../../service/PlanResponse';
+import { PlayerbaseOverviewData } from '../../service/model/PlayerbaseOverviewData';
 
-const NetworkPlayerbaseOverview = () => {
+const PlayerbaseOverview = () => {
     const { hasPermission } = useAuth();
+    const { identifier } = useParams();
 
-    const seeOverview = hasPermission('page.network.playerbase.overview');
-    const seeGraphs = hasPermission('page.network.playerbase.graphs');
+    const seeOverview = hasPermission('page.server.playerbase.overview');
+    const seeGraphs = hasPermission('page.server.playerbase.graphs');
     const { data, loadingError } = useDataRequest(
-        fetchNetworkPlayerbaseOverview,
-        [],
+        fetchPlayerbaseOverview,
+        [identifier],
         seeOverview,
-    );
+    ) as unknown as PlanDataResponse<PlayerbaseOverviewData>;
 
     return (
         <LoadIn>
-            <section className='network-playerbase'>
+            <section className='server-playerbase'>
                 {seeGraphs && (
-                    <ExtendableRow id={'row-network-playerbase-0'}>
+                    <ExtendableRow id={'row-server-playerbase-0'}>
                         <Col lg={8}>
-                            <PlayerbaseDevelopmentCard identifier={undefined} />
+                            <PlayerbaseDevelopmentCard
+                                identifier={identifier}
+                            />
                         </Col>
                         <Col lg={4}>
-                            <CurrentPlayerbaseCard identifier={undefined} />
+                            <CurrentPlayerbaseCard identifier={identifier} />
                         </Col>
                     </ExtendableRow>
                 )}
                 {seeOverview && (
-                    <ExtendableRow id={'row-network-playerbase-1'}>
+                    <ExtendableRow id={'row-server-playerbase-1'}>
                         {loadingError && <ErrorViewCard error={loadingError} />}
                         {!loadingError && (
                             <>
@@ -57,4 +63,4 @@ const NetworkPlayerbaseOverview = () => {
     );
 };
 
-export default NetworkPlayerbaseOverview;
+export default PlayerbaseOverview;

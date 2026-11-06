@@ -1,10 +1,21 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { Col } from 'react-bootstrap';
-import { ErrorViewCard } from '../ErrorView.tsx';
+import { ErrorViewCard, PlanError } from '../ErrorView';
 import GeolocationsCard from '../../components/cards/common/GeolocationsCard';
 import PingTableCard from '../../components/cards/common/PingTableCard';
-import LoadIn from '../../components/animation/LoadIn.tsx';
-import ExtendableRow from '../../components/layout/extension/ExtendableRow.tsx';
+import LoadIn from '../../components/animation/LoadIn';
+import ExtendableRow from '../../components/layout/extension/ExtendableRow';
+
+type Props = {
+    className: string;
+    identifier?: string;
+    geolocationData?: unknown;
+    pingData?: ComponentProps<typeof PingTableCard>['data'];
+    geolocationError?: PlanError;
+    pingError?: PlanError;
+    seeGeolocations: boolean;
+    seePing: boolean;
+};
 
 const Geolocations = ({
     className,
@@ -15,7 +26,7 @@ const Geolocations = ({
     pingError,
     seeGeolocations,
     seePing,
-}) => {
+}: Props) => {
     return (
         <LoadIn>
             <section className={className}>

@@ -3,7 +3,7 @@ import { useDataRequest } from '../../hooks/dataFetchHook';
 import Geolocations from '../common/Geolocations';
 import { fetchNetworkPingTable } from '../../service/networkService';
 import { fetchGeolocations } from '../../service/serverService';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
+import { useAuth } from '../../hooks/authenticationHook';
 
 const NetworkGeolocations = () => {
     const { hasPermission } = useAuth();
