@@ -1,5 +1,6 @@
 import React, {
     createContext,
+    PropsWithChildren,
     useCallback,
     useContext,
     useEffect,
@@ -11,32 +12,64 @@ import {
     fetchGroupPermissions,
     saveGroupPermissions,
 } from '../../service/manageService';
-import { useConfigurationStorageContext } from './configurationStorageContextHook.tsx';
+import { useConfigurationStorageContext } from './configurationStorageContextHook';
 import { FontAwesomeIcon as Fa } from '@fortawesome/react-fontawesome';
 import {
     faCheck,
     faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons';
-import { useAlertPopupContext } from './alertPopupContext.tsx';
+import { useAlertPopupContext } from './alertPopupContext';
 import { Trans, useTranslation } from 'react-i18next';
-import { useAuth } from '../authenticationHook.tsx';
+import { useAuth } from '../authenticationHook';
 
-const GroupEditContext = createContext({});
+type PermissionTreeNode = {
+    permission?: string;
+    toggled?: boolean;
+    parent?: PermissionNode;
+    children: PermissionNode[];
+};
 
-const createPermissionTree = (allPermissions, toggledPermissions) => {
+type PermissionNode = PermissionTreeNode & {
+    permission: string;
+    parentIndex: number;
+    toggled: boolean;
+};
+
+type GroupEditContextValue = {
+    changed: boolean;
+    permissionTree: PermissionTreeNode;
+    permissions: string[];
+    isChecked: (permission: string) => false | PermissionTreeNode;
+    isIndeterminate: (permission: string) => boolean;
+    togglePermission: (permission: string) => void;
+    groupName: string;
+};
+
+type Props = {
+    groupName: string;
+} & PropsWithChildren;
+
+const GroupEditContext = createContext<GroupEditContextValue>(
+    {} as GroupEditContextValue,
+);
+
+const createPermissionTree = (
+    allPermissions: string[],
+    toggledPermissions: string[],
+): PermissionTreeNode => {
     if (!allPermissions.length) {
         return { children: [] };
     }
     allPermissions.sort();
 
-    const isParent = (permission, parentCandidate) => {
+    const isParent = (permission: string, parentCandidate: string) => {
         if (parentCandidate === permission) return false;
         const substitute = permission.replace(parentCandidate, '')[0];
         // Last character is . so it is a sub-permission of the parent, eg. page.player, page.player.thing -> .thing
         return substitute.length && substitute[0] === '.';
     };
 
-    const idTree = [];
+    const idTree: PermissionNode[] = [];
     for (const permission of allPermissions) {
         const parentCandidates = allPermissions.filter((parentCandidate) =>
             isParent(permission, parentCandidate),
@@ -44,7 +77,7 @@ const createPermissionTree = (allPermissions, toggledPermissions) => {
         parentCandidates.sort();
         parentCandidates.reverse();
         const parent = parentCandidates.length ? parentCandidates[0] : null;
-        const parentIndex = allPermissions.indexOf(parent);
+        const parentIndex = allPermissions.indexOf(parent!);
         idTree.push({
             permission,
             parentIndex,
@@ -63,7 +96,7 @@ const createPermissionTree = (allPermissions, toggledPermissions) => {
     return { children: rootNodes };
 };
 
-export const GroupEditContextProvider = ({ groupName, children }) => {
+export const GroupEditContextProvider = ({ groupName, children }: Props) => {
     const { t } = useTranslation();
     const [changed, setChanged] = useState(false);
     const { markDirty, saveRequested, discardRequested } =
@@ -73,7 +106,7 @@ export const GroupEditContextProvider = ({ groupName, children }) => {
     const { addAlert } = useAlertPopupContext();
     const { updateLoginDetails } = useAuth();
 
-    const [allPermissions, setAllPermissions] = useState([]);
+    const [allPermissions, setAllPermissions] = useState<string[]>([]);
     useEffect(() => {
         // TODO Make this only happen once when opening groups page
         fetchAvailablePermissions().then((response) => {
@@ -81,7 +114,7 @@ export const GroupEditContextProvider = ({ groupName, children }) => {
         });
     }, []);
 
-    const [permissions, setPermissions] = useState([]);
+    const [permissions, setPermissions] = useState<string[]>([]);
     const loadPermissions = useCallback(() => {
         return fetchGroupPermissions(groupName).then((response) => {
             setPermissions(response?.data?.permissions);
@@ -93,56 +126,72 @@ export const GroupEditContextProvider = ({ groupName, children }) => {
         loadPermissions();
     }, [loadPermissions]);
 
-    const [permissionTree, setPermissionTree] = useState({ children: [] });
+    const [permissionTree, setPermissionTree] = useState<PermissionTreeNode>({
+        children: [],
+    });
     useEffect(() => {
         setPermissionTree(createPermissionTree(allPermissions, permissions));
     }, [allPermissions, permissions]);
 
-    const dfs = useCallback((root, permission) => {
-        if (root.permission === permission) return root;
+    const dfs = useCallback(
+        (
+            root: PermissionTreeNode,
+            permission: string,
+        ): PermissionTreeNode | null => {
+            if (root.permission === permission) return root;
 
-        for (const child of root.children) {
-            const found = dfs(child, permission);
-            if (found) return found;
-        }
-        return null;
-    }, []);
+            for (const child of root.children) {
+                const found = dfs(child, permission);
+                if (found) return found;
+            }
+            return null;
+        },
+        [],
+    );
 
-    const isNodeChecked = useCallback((node) => {
-        if (!node) return false;
-        const parentNode = node?.parent;
-        return node?.toggled ? node : isNodeChecked(parentNode);
-    }, []);
+    const isNodeChecked = useCallback(
+        (
+            node: PermissionTreeNode | null | undefined,
+        ): false | PermissionTreeNode => {
+            if (!node) return false;
+            const parentNode = node?.parent;
+            return node?.toggled ? node : isNodeChecked(parentNode);
+        },
+        [],
+    );
     const isChecked = useCallback(
-        (permission) => {
+        (permission: string) => {
             const node = dfs(permissionTree, permission);
             return isNodeChecked(node);
         },
         [permissionTree, isNodeChecked, dfs],
     );
 
-    const isNodeIndeterminate = useCallback((node) => {
-        // Indeterminate if:
-        // permission node itself is not toggled,
-        // but some of its children are toggled or indeterminate.
-        if (!node || node.toggled) return false;
+    const isNodeIndeterminate = useCallback(
+        (node: PermissionTreeNode | null): boolean => {
+            // Indeterminate if:
+            // permission node itself is not toggled,
+            // but some of its children are toggled or indeterminate.
+            if (!node || node.toggled) return false;
 
-        const childNodes = node.children;
-        const toggledChildNodes = node.children.filter(
-            (child) => child.toggled,
-        );
-        const indeterminate = toggledChildNodes.length !== 0;
-        if (indeterminate) return true;
+            const childNodes = node.children;
+            const toggledChildNodes = node.children.filter(
+                (child) => child.toggled,
+            );
+            const indeterminate = toggledChildNodes.length !== 0;
+            if (indeterminate) return true;
 
-        for (const child of childNodes) {
-            if (isNodeIndeterminate(child)) {
-                return true;
+            for (const child of childNodes) {
+                if (isNodeIndeterminate(child)) {
+                    return true;
+                }
             }
-        }
-        return false;
-    }, []);
+            return false;
+        },
+        [],
+    );
     const isIndeterminate = useCallback(
-        (permission) => {
+        (permission: string) => {
             const node = dfs(permissionTree, permission);
             return isNodeIndeterminate(node);
         },
@@ -150,7 +199,7 @@ export const GroupEditContextProvider = ({ groupName, children }) => {
     );
 
     const removePermissions = useCallback(
-        (toRemoveArray) => {
+        (toRemoveArray: string[]) => {
             const result = permissions.filter(
                 (p) => !toRemoveArray.includes(p),
             );
@@ -160,7 +209,7 @@ export const GroupEditContextProvider = ({ groupName, children }) => {
     );
 
     const modifyPermissions = useCallback(
-        (toAddArray, toRemoveArray) => {
+        (toAddArray: string[], toRemoveArray: string[]) => {
             const result = [...permissions, ...toAddArray].filter(
                 (p) => !toRemoveArray.includes(p),
             );
@@ -169,19 +218,22 @@ export const GroupEditContextProvider = ({ groupName, children }) => {
         [setPermissions, permissions],
     );
 
-    const getAllChildren = useCallback((root) => {
-        let children = [...root.children];
-        root.children.forEach((child) =>
-            children.push(...getAllChildren(child)),
-        );
-        return children;
-    }, []);
+    const getAllChildren = useCallback(
+        (root: PermissionTreeNode): PermissionNode[] => {
+            let children = [...root.children];
+            root.children.forEach((child) =>
+                children.push(...getAllChildren(child)),
+            );
+            return children;
+        },
+        [],
+    );
 
     const togglePermission = useCallback(
-        (permission) => {
-            markDirty(true);
+        (permission: string) => {
+            markDirty();
             setChanged(true);
-            const node = dfs(permissionTree, permission);
+            const node = dfs(permissionTree, permission)!;
 
             const checked = node.toggled;
             if (checked) {
@@ -192,7 +244,7 @@ export const GroupEditContextProvider = ({ groupName, children }) => {
                 if (checkedNode) {
                     // We need to find the nodes that are currently checked by the parent node
                     // This way only the node that was clicked gets unchecked
-                    const nodesToAdd = [];
+                    const nodesToAdd: PermissionNode[] = [];
                     const queue = [node.parent];
                     let foundAll = false;
                     while (!foundAll) {
@@ -210,7 +262,7 @@ export const GroupEditContextProvider = ({ groupName, children }) => {
 
                     // Then we need to remove the nodes that are no longer all checked
                     // This way all the parents of the node that was clicked are unchecked
-                    const nodesToRemove = [];
+                    const nodesToRemove: PermissionNode[] = [];
                     let next = node;
                     while (next.parent != null) {
                         nodesToRemove.push(next.parent);

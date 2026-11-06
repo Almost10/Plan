@@ -1,18 +1,28 @@
 import {
     createContext,
+    PropsWithChildren,
     useCallback,
     useContext,
     useMemo,
     useState,
 } from 'react';
 
-const DropdownStatusContext = createContext({});
+type DropdownStatusContextValue = {
+    toggled: string[];
+    toggle: (key: string) => void;
+};
 
-export const DropdownStatusContextProvider = ({ children }) => {
-    const [toggled, setToggled] = useState([]);
+const DropdownStatusContext = createContext<DropdownStatusContextValue>(
+    {} as DropdownStatusContextValue,
+);
+
+export const DropdownStatusContextProvider = ({
+    children,
+}: PropsWithChildren) => {
+    const [toggled, setToggled] = useState<string[]>([]);
 
     const toggle = useCallback(
-        (key) => {
+        (key: string) => {
             if (toggled.includes(key)) {
                 setToggled(toggled.filter((k) => k !== key));
             } else {
