@@ -2,7 +2,7 @@ import React from 'react';
 import { useDateFormatter } from '../../util/format/useDateFormatter.js';
 
 type Props = {
-    date: number | string;
+    date: number | string | undefined;
     react?: boolean;
     includeSeconds?: boolean;
 };

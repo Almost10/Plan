@@ -7,7 +7,7 @@ import { getViewTitle } from '../../views/query/QueryResultView';
 import { ChartLoader } from '../navigation/Loader';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../hooks/authenticationHook';
-import PlayerTable from '../table/PlayerTable.jsx';
+import PlayerTable from '../table/PlayerTable';
 import ActionButton from '../input/button/ActionButton';
 import ModalCloseButton from '../input/button/ModalCloseButton';
 import { QueryResult } from '../../hooks/model/QueryResult';

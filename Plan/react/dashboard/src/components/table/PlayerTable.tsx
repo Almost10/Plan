@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
-import { usePreferences } from '../../hooks/preferences/preferencesHook.tsx';
-import React, { useCallback, useEffect, useState } from 'react';
-import FormattedTime from '../text/FormattedTime.tsx';
-import FormattedDate from '../text/FormattedDate.tsx';
+import { usePreferences } from '../../hooks/preferences/preferencesHook';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import FormattedTime from '../text/FormattedTime';
+import FormattedDate from '../text/FormattedDate';
 import { FontAwesomeIcon as Fa } from '@fortawesome/react-fontawesome';
 import {
     faCheck,
@@ -16,19 +16,62 @@ import {
     faCalendarPlus,
     faClock,
 } from '@fortawesome/free-regular-svg-icons';
-import ExtensionIcon from '../extensions/ExtensionIcon.tsx';
+import ExtensionIcon from '../extensions/ExtensionIcon';
 import { Link } from 'react-router';
-import { ExtensionValueTableCell } from '../extensions/ExtensionValue.tsx';
-import { ChartLoader } from '../navigation/Loader.tsx';
+import { ExtensionValueTableCell } from '../extensions/ExtensionValue';
+import { ChartLoader } from '../navigation/Loader';
 import DataTablesTable from './DataTablesTable.jsx';
 import {
     localeService,
     reverseRegionLookupMap,
 } from '../../service/localeService.js';
-import { usePingFormatter } from '../../util/format/usePingFormatter.ts';
-import { useDecimalFormatter } from '../../util/format/useDecimalFormatter.ts';
+import { usePingFormatter } from '../../util/format/usePingFormatter';
+import { useDecimalFormatter } from '../../util/format/useDecimalFormatter';
+import {
+    ExtensionDescription,
+    ExtensionValue,
+} from '../../dataHooks/model/extension/ExtensionData';
 
-const getActivityGroup = (value) => {
+type TablePlayer = {
+    playerUUID: string;
+    playerName: string;
+    activityIndex: number;
+    playtimeActive: number;
+    sessionCount: number;
+    lastSeen?: number;
+    registered?: number;
+    country?: string;
+    pingAverage?: number;
+    pingMax?: number;
+    pingMin?: number;
+    nicknames?: string;
+    extensionValues: Record<string, ExtensionValue>;
+};
+
+export type PlayerList = {
+    players: TablePlayer[];
+    extensionDescriptors: ExtensionDescription[];
+};
+
+type Column = {
+    title: ReactNode;
+    data: string | { _: string; display: string };
+};
+
+type TableOptions = {
+    responsive: boolean;
+    deferRender: boolean;
+    columns: Column[];
+    data: Record<string, ReactNode>[];
+    order: (string | number)[][];
+};
+
+type Props = {
+    data?: PlayerList;
+    orderBy?: number;
+};
+
+const getActivityGroup = (value: number) => {
     const VERY_ACTIVE = 3.75;
     const ACTIVE = 3;
     const REGULAR = 2;
@@ -46,18 +89,18 @@ const getActivityGroup = (value) => {
     }
 };
 
-const PlayerTable = ({ data, orderBy }) => {
+const PlayerTable = ({ data, orderBy }: Props) => {
     const { t } = useTranslation();
     const { formatPing } = usePingFormatter();
     const { formatDecimals } = useDecimalFormatter();
     const { preferencesLoaded } = usePreferences();
 
-    const [options, setOptions] = useState(undefined);
+    const [options, setOptions] = useState<TableOptions | undefined>(undefined);
 
     useEffect(() => {
         if (!data) return;
 
-        const columns = [
+        const columns: Column[] = [
             {
                 title: (
                     <>
@@ -165,14 +208,16 @@ const PlayerTable = ({ data, orderBy }) => {
         );
 
         const rows = data.players.map((player) => {
-            const code = reverseRegionLookupMap[player.country];
+            const code = (reverseRegionLookupMap as Record<string, string>)[
+                player.country!
+            ];
             const location = code
                 ? regions.of(code)
                 : player.country?.replace(
                       'Local Machine',
                       t('html.value.localMachine'),
                   );
-            const row = {
+            const row: Record<string, ReactNode> = {
                 name: player.playerName,
                 uuid: player.playerUUID,
                 link: (
@@ -233,9 +278,12 @@ const PlayerTable = ({ data, orderBy }) => {
         });
     }, [data, orderBy, t, formatPing, formatDecimals]);
 
-    const rowKeyFunction = useCallback((row, column) => {
-        return row.uuid + '-' + (column ? JSON.stringify(column.data) : '');
-    }, []);
+    const rowKeyFunction = useCallback(
+        (row: { uuid: string }, column: Column | null) => {
+            return row.uuid + '-' + (column ? JSON.stringify(column.data) : '');
+        },
+        [],
+    );
 
     if (!preferencesLoaded) return <></>;
     if (!options) return <ChartLoader />;
@@ -245,6 +293,10 @@ const PlayerTable = ({ data, orderBy }) => {
             id={'players-table'}
             rowKeyFunction={rowKeyFunction}
             options={options}
+            colorClass={undefined}
+            className={undefined}
+            expandComponent={undefined}
+            clickableRows={undefined}
         />
     );
 };

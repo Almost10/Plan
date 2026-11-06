@@ -2,12 +2,14 @@ import React from 'react';
 import { useDataRequest } from '../../hooks/dataFetchHook';
 import { useParams } from 'react-router';
 import { fetchPlayersTable } from '../../service/serverService';
-import ErrorView from '../ErrorView.tsx';
+import ErrorView from '../ErrorView';
 import { Col } from 'react-bootstrap';
 import PlayerListCard from '../../components/cards/common/PlayerListCard';
-import LoadIn from '../../components/animation/LoadIn.tsx';
-import ExtendableRow from '../../components/layout/extension/ExtendableRow.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
+import LoadIn from '../../components/animation/LoadIn';
+import ExtendableRow from '../../components/layout/extension/ExtendableRow';
+import { useAuth } from '../../hooks/authenticationHook';
+import { PlanDataResponse } from '../../service/PlanResponse';
+import { PlayerList } from '../../components/table/PlayerTable';
 
 const ServerPlayers = () => {
     const { hasPermission } = useAuth();
@@ -18,7 +20,7 @@ const ServerPlayers = () => {
         fetchPlayersTable,
         [identifier],
         seePlayers,
-    );
+    ) as unknown as PlanDataResponse<PlayerList>;
 
     if (loadingError) return <ErrorView error={loadingError} />;
 

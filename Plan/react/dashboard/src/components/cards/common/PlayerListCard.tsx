@@ -3,9 +3,15 @@ import { Card } from 'react-bootstrap';
 import { FontAwesomeIcon as Fa } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { faUsers } from '@fortawesome/free-solid-svg-icons';
-import PlayerTable from '../../table/PlayerTable.jsx';
+import PlayerTable, { PlayerList } from '../../table/PlayerTable';
 
-const PlayerListCard = ({ data, title, orderBy }) => {
+type Props = {
+    data?: PlayerList;
+    title?: string;
+    orderBy?: number;
+};
+
+const PlayerListCard = ({ data, title, orderBy }: Props) => {
     const { t } = useTranslation();
 
     return (
