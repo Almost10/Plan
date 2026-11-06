@@ -3,12 +3,10 @@ import RecentSessionsCard from '../common/RecentSessionsCard';
 import { useGenericFilter } from '../../../dataHooks/genericFilterContextHook';
 import { useSessions } from '../../../dataHooks/sessionsHooks';
 import { ErrorViewCard } from '../../../views/ErrorView';
-import { FinishedSession } from '../../../dataHooks/model/session/FinishedSession';
+import { Player } from '../../../dataHooks/model/Player';
 
 type Props = {
-    player: {
-        sessions: FinishedSession[];
-    };
+    player: Pick<Player, 'sessions'>;
 };
 
 const PlayerRecentSessionsCard = ({ player }: Props) => {

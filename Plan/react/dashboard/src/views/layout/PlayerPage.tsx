@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import Sidebar from '../../components/navigation/Sidebar';
+import Sidebar, { SidebarItem } from '../../components/navigation/Sidebar';
 import { Outlet, useOutletContext, useParams } from 'react-router';
-import ColorSelectorModal from '../../components/modal/ColorSelectorModal.tsx';
+import ColorSelectorModal from '../../components/modal/ColorSelectorModal';
 import { fetchPlayer } from '../../service/playerService';
 import {
     faArrowUpRightDots,
@@ -11,15 +11,17 @@ import {
     faNetworkWired,
 } from '@fortawesome/free-solid-svg-icons';
 import Header from '../../components/navigation/Header';
-import { useNavigation } from '../../hooks/navigationHook.tsx';
+import { useNavigation } from '../../hooks/navigationHook';
 import { useTranslation } from 'react-i18next';
 import { faCalendarCheck } from '@fortawesome/free-regular-svg-icons';
 import { useDataRequest } from '../../hooks/dataFetchHook';
 import ErrorPage from './ErrorPage';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
-import MainPageRedirect from '../../components/navigation/MainPageRedirect.tsx';
+import { useAuth } from '../../hooks/authenticationHook';
+import MainPageRedirect from '../../components/navigation/MainPageRedirect';
 import { SwitchTransition } from 'react-transition-group';
-import { ChartLoader } from '../../components/navigation/Loader.tsx';
+import { ChartLoader } from '../../components/navigation/Loader';
+import { PlanDataResponse } from '../../service/PlanResponse';
+import { Player } from '../../dataHooks/model/Player';
 
 const HelpModal = React.lazy(() => import('../../components/modal/HelpModal'));
 
@@ -37,12 +39,12 @@ const PlayerPage = () => {
         fetchPlayer,
         [identifier],
         seePlayer,
-    );
+    ) as unknown as PlanDataResponse<Player>;
 
     useEffect(() => {
         if (!player) return;
 
-        const items = [
+        const items: SidebarItem[] = [
             {
                 name: 'html.label.playerOverview',
                 icon: faInfoCircle,
@@ -137,7 +139,7 @@ const PlayerPage = () => {
 };
 
 export const usePlayer = () => {
-    return useOutletContext();
+    return useOutletContext<{ player: Player }>();
 };
 
 export default PlayerPage;

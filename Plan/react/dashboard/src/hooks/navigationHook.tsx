@@ -13,12 +13,12 @@ type NavigationContextValue = {
     setCurrentTab: (tab: string) => void;
     lastUpdate: LastUpdate;
     updateRequested: number;
-    updating: boolean;
+    updating: boolean | undefined;
     requestUpdate: () => void;
     finishUpdate: (
         date: number,
         formatted: string,
-        isStillUpdating: boolean,
+        isStillUpdating?: boolean,
     ) => void;
     sidebarExpanded: boolean;
     setSidebarExpanded: (expanded: boolean) => void;
@@ -41,7 +41,7 @@ const NavigationContext = createContext<NavigationContextValue | undefined>(
 export const NavigationContextProvider = ({ children }: PropsWithChildren) => {
     const [currentTab, setCurrentTab] = useState<string | undefined>(undefined);
     const [updateRequested, setUpdateRequested] = useState(Date.now());
-    const [updating, setUpdating] = useState<boolean>(false);
+    const [updating, setUpdating] = useState<boolean | undefined>(false);
     const [lastUpdate, setLastUpdate] = useState<LastUpdate>({});
 
     const [items, setItems] = useState<SidebarItem[]>([]);
@@ -87,7 +87,7 @@ export const NavigationContextProvider = ({ children }: PropsWithChildren) => {
     // useEffect(requestUpdate, [currentTab]); // Force data to update when changing tab
 
     const finishUpdate = useCallback(
-        (date: number, formatted: string, isStillUpdating: boolean) => {
+        (date: number, formatted: string, isStillUpdating?: boolean) => {
             if (date) {
                 if (!lastUpdate.date || date > lastUpdate.date) {
                     setLastUpdate({ date, formatted });

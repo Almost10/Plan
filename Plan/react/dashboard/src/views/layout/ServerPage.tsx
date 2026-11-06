@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useParams } from 'react-router';
-import { useNavigation } from '../../hooks/navigationHook.tsx';
+import { useNavigation } from '../../hooks/navigationHook';
 import {
     faArrowUpRightDots,
     faCampground,
@@ -20,23 +20,25 @@ import {
     faUsers,
     faUsersViewfinder,
 } from '@fortawesome/free-solid-svg-icons';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
-import Sidebar from '../../components/navigation/Sidebar';
+import { useAuth } from '../../hooks/authenticationHook';
+import Sidebar, { SidebarItem } from '../../components/navigation/Sidebar';
 import Header from '../../components/navigation/Header';
-import ColorSelectorModal from '../../components/modal/ColorSelectorModal.tsx';
-import { useMetadata } from '../../hooks/metadataHook.tsx';
+import ColorSelectorModal from '../../components/modal/ColorSelectorModal';
+import { useMetadata } from '../../hooks/metadataHook';
 import { faCalendarCheck } from '@fortawesome/free-regular-svg-icons';
 import ErrorPage from './ErrorPage';
 import { SwitchTransition } from 'react-transition-group';
-import MainPageRedirect from '../../components/navigation/MainPageRedirect.tsx';
+import MainPageRedirect from '../../components/navigation/MainPageRedirect';
 import { useDataRequest } from '../../hooks/dataFetchHook';
 import { fetchServerIdentity } from '../../service/serverService';
 import {
     ServerExtensionContextProvider,
     useServerExtensionContext,
 } from '../../hooks/serverExtensionDataContext';
-import { iconTypeToFontAwesomeClass } from '../../util/icons.ts';
+import { iconTypeToFontAwesomeClass } from '../../util/icons';
 import { staticSite } from '../../service/backendConfiguration';
+import { Metadata } from '../../hooks/model/Metadata';
+import { PlanDataResponse } from '../../service/PlanResponse';
 
 const HelpModal = React.lazy(() => import('../../components/modal/HelpModal'));
 
@@ -47,7 +49,7 @@ const ServerSidebar = () => {
     const { extensionData } = useServerExtensionContext();
 
     useEffect(() => {
-        let items = [
+        let items: SidebarItem[] = [
             {
                 name: 'html.label.serverOverview',
                 icon: faInfoCircle,
@@ -157,7 +159,7 @@ const ServerSidebar = () => {
             extensionData.extensions
                 .filter((extension) => extension.wide)
                 .map((extension) => extension.extensionInformation)
-                .map((info) => {
+                .map((info): SidebarItem => {
                     return {
                         name: info.pluginName,
                         icon: [
@@ -198,10 +200,13 @@ const ServerSidebar = () => {
 const ServerPage = () => {
     const { t } = useTranslation();
     const { identifier } = useParams();
-    const { isProxy, serverName, networkMetadata } = useMetadata();
+    const { isProxy, serverName, networkMetadata } =
+        useMetadata() as Partial<Metadata>;
 
     const { data: serverIdentity, loadingError: identityLoadingError } =
-        useDataRequest(fetchServerIdentity, [identifier]);
+        useDataRequest(fetchServerIdentity, [
+            identifier,
+        ]) as unknown as PlanDataResponse<{ serverName: string }>;
     const [error] = useState(undefined);
 
     const { currentTab } = useNavigation();

@@ -31,6 +31,7 @@ type SidebarLink = {
     color?: string;
     external?: boolean;
     permission?: string;
+    authRequired?: boolean;
     contents?: undefined;
 };
 
@@ -41,6 +42,7 @@ type SidebarCollapseItem = {
     icon: IconProp;
     color?: string;
     permission?: string;
+    authRequired?: boolean;
     contents: (SidebarLink | SidebarDivider)[];
     href?: undefined;
 };
@@ -48,6 +50,7 @@ type SidebarCollapseItem = {
 type SidebarHeading = {
     name: string;
     permission?: string;
+    authRequired?: boolean;
     contents?: undefined;
     href?: undefined;
 };
