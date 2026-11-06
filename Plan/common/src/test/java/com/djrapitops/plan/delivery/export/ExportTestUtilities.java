@@ -141,7 +141,7 @@ public class ExportTestUtilities {
             for (int players = 0; players <= 1; players++) {
                 var tps = TPSBuilder.get()
                         .date(date + TimeUnit.MINUTES.toMillis(players))
-                        .tps(17.0).playersOnline(players)
+                        .tps(5.0).playersOnline(players)
                         .usedCPU(25.0).usedMemory(1024)
                         .entities(100).chunksLoaded(10).freeDiskSpace(1024)
                         .msptAverage(25.0).mspt95thPercentile(30.0)
