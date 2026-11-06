@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { Col, InputGroup, Row } from 'react-bootstrap';
-import { useColorEditContext } from '../../hooks/context/colorEditContextHook.jsx';
+import { useColorEditContext } from '../../hooks/context/colorEditContextHook';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {

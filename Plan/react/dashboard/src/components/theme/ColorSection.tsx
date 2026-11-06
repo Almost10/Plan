@@ -1,7 +1,13 @@
-import { ColorBox } from './ColorBox.jsx';
+import { ColorBox } from './ColorBox';
 import React from 'react';
+import { ColorPropertyMap } from './model/ThemeConfig';
 
-const ColorSection = ({ title, colors }) => (
+type Props = {
+    title: string;
+    colors: ColorPropertyMap;
+};
+
+const ColorSection = ({ title, colors }: Props) => (
     <div className='mb-1'>
         <h5 className='mb-3'>{title}</h5>
         <div className='row'>
