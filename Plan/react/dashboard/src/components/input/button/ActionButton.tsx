@@ -1,10 +1,10 @@
-import React, { CSSProperties, PropsWithChildren } from 'react';
+import React, { CSSProperties, MouseEvent, PropsWithChildren } from 'react';
 
 type Props = {
     id?: string;
     className?: string;
     disabled?: boolean;
-    onClick: (() => void) | (() => Promise<void>);
+    onClick: (event: MouseEvent<HTMLButtonElement>) => void | Promise<void>;
     style?: CSSProperties;
     title?: string;
 } & PropsWithChildren;

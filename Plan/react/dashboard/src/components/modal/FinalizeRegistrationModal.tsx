@@ -9,7 +9,7 @@ import ModalCloseButton from '../input/button/ModalCloseButton';
 type Props = {
     show: boolean;
     toggle: () => void;
-    registerCode: string;
+    registerCode?: string;
 };
 
 const FinalizeRegistrationModal = ({ show, toggle, registerCode }: Props) => {

@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+    MouseEvent,
+    PropsWithChildren,
+    useCallback,
+    useEffect,
+    useState,
+} from 'react';
 
 import logo from '../../Flaticon_circle.png';
 import { Alert, Card, Col, Row } from 'react-bootstrap';
@@ -6,16 +12,17 @@ import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon as Fa } from '@fortawesome/react-fontawesome';
 import { faPalette } from '@fortawesome/free-solid-svg-icons';
-import { useTheme } from '../../hooks/themeHook.tsx';
-import ColorSelectorModal from '../../components/modal/ColorSelectorModal.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
-import FinalizeRegistrationModal from '../../components/modal/FinalizeRegistrationModal.tsx';
+import { useTheme } from '../../hooks/themeHook';
+import ColorSelectorModal from '../../components/modal/ColorSelectorModal';
+import { useAuth } from '../../hooks/authenticationHook';
+import FinalizeRegistrationModal from '../../components/modal/FinalizeRegistrationModal';
 import {
     fetchRegisterCheck,
     postRegister,
 } from '../../service/authenticationService';
-import { useMetadata } from '../../hooks/metadataHook.tsx';
-import ActionButton from '../../components/input/button/ActionButton.tsx';
+import { useMetadata } from '../../hooks/metadataHook';
+import ActionButton from '../../components/input/button/ActionButton';
+import { Metadata } from '../../hooks/model/Metadata';
 
 const Logo = () => {
     return (
@@ -25,7 +32,7 @@ const Logo = () => {
     );
 };
 
-const RegisterCard = ({ children }) => {
+const RegisterCard = ({ children }: PropsWithChildren) => {
     return (
         <Row className='justify-content-center container-fluid'>
             <Col xl={6} lg={7} md={9}>
@@ -43,15 +50,19 @@ const RegisterCard = ({ children }) => {
     );
 };
 
-const RegisterForm = ({ register }) => {
+type RegisterFormProps = {
+    register: (username: string, password: string) => Promise<void>;
+};
+
+const RegisterForm = ({ register }: RegisterFormProps) => {
     const { t } = useTranslation();
 
-    const { registrationDisabled } = useMetadata();
+    const { registrationDisabled } = useMetadata() as Partial<Metadata>;
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     const onRegister = useCallback(
-        (event) => {
+        (event: MouseEvent) => {
             event.preventDefault();
             register(username, password).then(() => setPassword(''));
         },
@@ -138,7 +149,9 @@ const RegisterPage = () => {
     const [finalizeRegistrationModalOpen, setFinalizeRegistrationModalOpen] =
         useState(false);
 
-    const [registerCode, setRegisterCode] = useState(undefined);
+    const [registerCode, setRegisterCode] = useState<string | undefined>(
+        undefined,
+    );
     const [failMessage, setFailMessage] = useState('');
 
     const toggleRegistrationModal = useCallback(
@@ -154,7 +167,7 @@ const RegisterPage = () => {
         };
     }, []);
 
-    const checkRegistration = async (code) => {
+    const checkRegistration = async (code: string) => {
         if (!code) {
             setFinalizeRegistrationModalOpen(false);
             return setFailMessage('Register code was not received.');
@@ -175,7 +188,7 @@ const RegisterPage = () => {
         }
     };
 
-    const register = async (username, password) => {
+    const register = async (username: string, password: string) => {
         if (!username || username.length < 1) {
             return setFailMessage(t('html.register.error.noUsername'));
         }
