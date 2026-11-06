@@ -1,8 +1,13 @@
-import ErrorView from '../ErrorView.tsx';
-import LoadIn from '../../components/animation/LoadIn.tsx';
+import ErrorView, { PlanError } from '../ErrorView';
+import LoadIn from '../../components/animation/LoadIn';
 import { Card, Col, InputGroup, Row } from 'react-bootstrap';
-import React, { useCallback, useEffect, useState } from 'react';
-import CardHeader from '../../components/cards/CardHeader.tsx';
+import React, {
+    PropsWithChildren,
+    useCallback,
+    useEffect,
+    useState,
+} from 'react';
+import CardHeader from '../../components/cards/CardHeader';
 import {
     faCheck,
     faExclamationTriangle,
@@ -19,6 +24,7 @@ import {
 } from '@fortawesome/react-fontawesome';
 import {
     GroupEditContextProvider,
+    PermissionTreeNode,
     useGroupEditContext,
 } from '../../hooks/context/groupEditContextHook';
 import {
@@ -26,42 +32,63 @@ import {
     deleteGroup,
     fetchGroups,
 } from '../../service/manageService';
-import {
-    CardLoader,
-    ChartLoader,
-} from '../../components/navigation/Loader.tsx';
+import { CardLoader, ChartLoader } from '../../components/navigation/Loader';
 import { Trans, useTranslation } from 'react-i18next';
 import {
     ConfigurationStorageContextProvider,
     useConfigurationStorageContext,
-} from '../../hooks/context/configurationStorageContextHook.tsx';
+} from '../../hooks/context/configurationStorageContextHook';
 import SideNavTabs from '../../components/layout/SideNavTabs';
-import Select from '../../components/input/Select.tsx';
-import Scrollable from '../../components/Scrollable.tsx';
-import OpaqueText from '../../components/layout/OpaqueText.tsx';
-import { useAlertPopupContext } from '../../hooks/context/alertPopupContext.tsx';
+import Select from '../../components/input/Select';
+import Scrollable from '../../components/Scrollable';
+import OpaqueText from '../../components/layout/OpaqueText';
+import { useAlertPopupContext } from '../../hooks/context/alertPopupContext';
 import {
     DropdownStatusContextProvider,
     useDropdownStatusContext,
 } from '../../hooks/context/dropdownStatusContextHook';
-import { useNavigation } from '../../hooks/navigationHook.tsx';
+import { useNavigation } from '../../hooks/navigationHook';
 import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
-import Checkbox from '../../components/input/Checkbox.tsx';
-import TextInput from '../../components/input/TextInput.tsx';
-import UnsavedChangesText from '../../components/text/UnsavedChangesText.tsx';
-import ActionButton from '../../components/input/button/ActionButton.tsx';
-import DangerButton from '../../components/input/button/DangerButton.tsx';
-import OutlineButton from '../../components/input/button/OutlineButton.tsx';
-import SecondaryActionButton from '../../components/input/button/SecondaryActionButton.tsx';
+import { useAuth } from '../../hooks/authenticationHook';
+import Checkbox from '../../components/input/Checkbox';
+import TextInput from '../../components/input/TextInput';
+import UnsavedChangesText from '../../components/text/UnsavedChangesText';
+import ActionButton from '../../components/input/button/ActionButton';
+import DangerButton from '../../components/input/button/DangerButton';
+import OutlineButton from '../../components/input/button/OutlineButton';
+import SecondaryActionButton from '../../components/input/button/SecondaryActionButton';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
-const GroupsHeader = ({ groupName, icon }) => {
+type Group = {
+    name: string;
+};
+
+type GroupListProps = {
+    groups: Group[];
+    reloadGroupNames: () => void;
+};
+
+type GroupsHeaderProps = {
+    groupName: string;
+    icon?: IconProp;
+};
+
+const GroupsHeader = ({ groupName, icon }: GroupsHeaderProps) => {
     return (
         <span className={'float-start'}>
             <FontAwesomeIcon icon={icon || faUserGroup} /> {groupName}
         </span>
     );
 };
+
+type PermissionDropdownProps = {
+    permission?: string;
+    checked: boolean;
+    indeterminate: boolean;
+    togglePermission: (permission: string) => void;
+    childNodes: PermissionTreeNode[];
+    root: boolean;
+} & PropsWithChildren;
 
 const PermissionDropdown = ({
     permission,
@@ -71,7 +98,7 @@ const PermissionDropdown = ({
     children,
     childNodes,
     root,
-}) => {
+}: PermissionDropdownProps) => {
     const { t } = useTranslation();
     const { toggle, toggled } = useDropdownStatusContext();
 
@@ -123,7 +150,7 @@ const PermissionDropdown = ({
                 }>
                 <Checkbox
                     checked={checked}
-                    onChange={() => togglePermission(permission)}
+                    onChange={() => togglePermission(permission!)}
                 />{' '}
                 {permission}{' '}
                 {permission && translated !== translationKey && (
@@ -134,12 +161,19 @@ const PermissionDropdown = ({
     }
 };
 
+type PermissionTreeProps = {
+    nodes: PermissionTreeNode[];
+    isIndeterminate: (permission: string | undefined) => boolean;
+    isChecked: (permission: string | undefined) => false | PermissionTreeNode;
+    togglePermission: (permission: string) => void;
+};
+
 const PermissionTree = ({
     nodes,
     isIndeterminate,
     isChecked,
     togglePermission,
-}) => {
+}: PermissionTreeProps) => {
     if (!nodes.length) {
         return <></>;
     }
@@ -151,7 +185,7 @@ const PermissionTree = ({
                         permission={node.permission}
                         root={node.parentIndex === -1}
                         indeterminate={isIndeterminate(node.permission)}
-                        checked={isChecked(node.permission)}
+                        checked={Boolean(isChecked(node.permission))}
                         togglePermission={togglePermission}
                         childNodes={node.children}>
                         <PermissionTree
@@ -167,7 +201,7 @@ const PermissionTree = ({
     );
 };
 
-const GroupsBody = ({ groups, reloadGroupNames }) => {
+const GroupsBody = ({ groups, reloadGroupNames }: GroupListProps) => {
     const {
         changed,
         groupName,
@@ -198,7 +232,6 @@ const GroupsBody = ({ groups, reloadGroupNames }) => {
                     {permissionTree?.children?.length && (
                         <PermissionTree
                             nodes={[permissionTree]}
-                            childNodes={permissionTree.children}
                             togglePermission={togglePermission}
                             isChecked={isChecked}
                             isIndeterminate={isIndeterminate}
@@ -226,7 +259,15 @@ const SaveButton = () => {
     );
 };
 
-const DeleteGroupButton = ({ groupName, groups, reloadGroupNames }) => {
+type DeleteGroupButtonProps = GroupListProps & {
+    groupName: string;
+};
+
+const DeleteGroupButton = ({
+    groupName,
+    groups,
+    reloadGroupNames,
+}: DeleteGroupButtonProps) => {
     const [clicked, setClicked] = useState(false);
     const [moveToGroup, setMoveToGroup] = useState(0);
     const { addAlert } = useAlertPopupContext();
@@ -373,15 +414,17 @@ const DiscardButton = () => {
     );
 };
 
-const AddGroupBody = ({ groups, reloadGroupNames }) => {
+const AddGroupBody = ({ groups, reloadGroupNames }: GroupListProps) => {
     const { t } = useTranslation();
     const [value, setValue] = useState('');
     const { addAlert } = useAlertPopupContext();
 
-    const isInvalid = (newValue) =>
-        newValue &&
-        (newValue.length > 100 ||
-            groups.find((group) => group.name === newValue));
+    const isInvalid = (newValue: string) =>
+        Boolean(
+            newValue &&
+            (newValue.length > 100 ||
+                groups.find((group) => group.name === newValue)),
+        );
     const invalid = isInvalid(value);
     return (
         <Card>
@@ -453,7 +496,7 @@ const AddGroupBody = ({ groups, reloadGroupNames }) => {
     );
 };
 
-const GroupsCard = ({ groups, reloadGroupNames }) => {
+const GroupsCard = ({ groups, reloadGroupNames }: GroupListProps) => {
     const { t } = useTranslation();
     const { setHelpModalTopic } = useNavigation();
     const openHelp = useCallback(
@@ -519,8 +562,12 @@ const GroupsView = () => {
     const seeManageGroups = hasPermission('manage.groups');
 
     const [updateRequested, setUpdateRequested] = useState(Date.now());
-    const [data, setData] = useState(undefined);
-    const [loadingError, setLoadingError] = useState(undefined);
+    const [data, setData] = useState<{ groups: Group[] } | undefined>(
+        undefined,
+    );
+    const [loadingError, setLoadingError] = useState<PlanError | undefined>(
+        undefined,
+    );
     const loadGroupNames = useCallback(() => {
         if (!seeManageGroups) return;
         fetchGroups().then(({ data, error }) => {

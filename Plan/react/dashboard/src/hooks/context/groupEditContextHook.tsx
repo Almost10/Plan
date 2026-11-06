@@ -22,14 +22,15 @@ import { useAlertPopupContext } from './alertPopupContext';
 import { Trans, useTranslation } from 'react-i18next';
 import { useAuth } from '../authenticationHook';
 
-type PermissionTreeNode = {
+export type PermissionTreeNode = {
     permission?: string;
+    parentIndex?: number;
     toggled?: boolean;
     parent?: PermissionNode;
     children: PermissionNode[];
 };
 
-type PermissionNode = PermissionTreeNode & {
+export type PermissionNode = PermissionTreeNode & {
     permission: string;
     parentIndex: number;
     toggled: boolean;
@@ -39,8 +40,8 @@ type GroupEditContextValue = {
     changed: boolean;
     permissionTree: PermissionTreeNode;
     permissions: string[];
-    isChecked: (permission: string) => false | PermissionTreeNode;
-    isIndeterminate: (permission: string) => boolean;
+    isChecked: (permission: string | undefined) => false | PermissionTreeNode;
+    isIndeterminate: (permission: string | undefined) => boolean;
     togglePermission: (permission: string) => void;
     groupName: string;
 };
@@ -136,7 +137,7 @@ export const GroupEditContextProvider = ({ groupName, children }: Props) => {
     const dfs = useCallback(
         (
             root: PermissionTreeNode,
-            permission: string,
+            permission: string | undefined,
         ): PermissionTreeNode | null => {
             if (root.permission === permission) return root;
 
@@ -160,7 +161,7 @@ export const GroupEditContextProvider = ({ groupName, children }: Props) => {
         [],
     );
     const isChecked = useCallback(
-        (permission: string) => {
+        (permission: string | undefined) => {
             const node = dfs(permissionTree, permission);
             return isNodeChecked(node);
         },
@@ -191,7 +192,7 @@ export const GroupEditContextProvider = ({ groupName, children }: Props) => {
         [],
     );
     const isIndeterminate = useCallback(
-        (permission: string) => {
+        (permission: string | undefined) => {
             const node = dfs(permissionTree, permission);
             return isNodeIndeterminate(node);
         },
