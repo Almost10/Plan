@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router';
-import { useNavigation } from '../../hooks/navigationHook.tsx';
+import { useNavigation } from '../../hooks/navigationHook';
 import {
     faArrowUpRightDots,
     faChartLine,
@@ -18,20 +18,21 @@ import {
     faUsers,
     faUsersViewfinder,
 } from '@fortawesome/free-solid-svg-icons';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
-import Sidebar from '../../components/navigation/Sidebar';
+import { useAuth } from '../../hooks/authenticationHook';
+import Sidebar, { SidebarItem } from '../../components/navigation/Sidebar';
 import Header from '../../components/navigation/Header';
-import ColorSelectorModal from '../../components/modal/ColorSelectorModal.tsx';
-import { useMetadata } from '../../hooks/metadataHook.tsx';
+import ColorSelectorModal from '../../components/modal/ColorSelectorModal';
+import { useMetadata } from '../../hooks/metadataHook';
 import { faCalendarCheck } from '@fortawesome/free-regular-svg-icons';
 import { SwitchTransition } from 'react-transition-group';
-import MainPageRedirect from '../../components/navigation/MainPageRedirect.tsx';
+import MainPageRedirect from '../../components/navigation/MainPageRedirect';
 import {
     ServerExtensionContextProvider,
     useServerExtensionContext,
 } from '../../hooks/serverExtensionDataContext';
-import { iconTypeToFontAwesomeClass } from '../../util/icons.ts';
+import { iconTypeToFontAwesomeClass } from '../../util/icons';
 import { staticSite } from '../../service/backendConfiguration';
+import { Metadata } from '../../hooks/model/Metadata';
 
 const HelpModal = React.lazy(() => import('../../components/modal/HelpModal'));
 
@@ -39,12 +40,12 @@ const NetworkSidebar = () => {
     const { t, i18n } = useTranslation();
     const { authRequired } = useAuth();
     const { sidebarItems, setSidebarItems } = useNavigation();
-    const { networkMetadata } = useMetadata();
+    const { networkMetadata } = useMetadata() as Partial<Metadata>;
     const { extensionData } = useServerExtensionContext();
 
     useEffect(() => {
         const servers = networkMetadata?.servers || [];
-        let items = [
+        let items: SidebarItem[] = [
             {
                 name: 'html.label.networkOverview',
                 icon: faInfoCircle,
@@ -157,7 +158,7 @@ const NetworkSidebar = () => {
             extensionData.extensions
                 .filter((extension) => extension.wide)
                 .map((extension) => extension.extensionInformation)
-                .map((info) => {
+                .map((info): SidebarItem => {
                     return {
                         name: info.pluginName,
                         icon: [
@@ -203,7 +204,7 @@ const NetworkSidebar = () => {
 };
 
 const NetworkPage = () => {
-    const { networkName, serverUUID } = useMetadata();
+    const { networkName, serverUUID } = useMetadata() as Partial<Metadata>;
 
     const { currentTab } = useNavigation();
 

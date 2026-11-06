@@ -43,7 +43,7 @@ type SidebarCollapseItem = {
     color?: string;
     permission?: string;
     authRequired?: boolean;
-    contents: (SidebarLink | SidebarDivider)[];
+    contents: (SidebarLink | SidebarDivider | undefined)[];
     href?: undefined;
 };
 
