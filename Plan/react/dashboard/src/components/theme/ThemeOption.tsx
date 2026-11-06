@@ -8,7 +8,7 @@ import { ThemeStorageContextProvider } from '../../hooks/context/themeContextHoo
 import { ThemeStyleCss } from './ThemeStyleCss';
 import { Card, Col } from 'react-bootstrap';
 import logo from '../../Flaticon_circle.png';
-import drawSine from '../../util/loginSineRenderer.js';
+import drawSine from '../../util/loginSineRenderer';
 import { calculateCssHexColor } from '../../util/colors';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {

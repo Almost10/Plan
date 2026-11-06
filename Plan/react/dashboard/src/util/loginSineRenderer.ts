@@ -1,8 +1,8 @@
 // https://gist.github.com/gkhays/e264009c0832c73d5345847e673a64ab
-export default function drawSine(canvasId, fillColor) {
-    let step;
+export default function drawSine(canvasId: string, fillColor?: string) {
+    let step: number;
 
-    function drawPoint(ctx, x, y) {
+    function drawPoint(ctx: CanvasRenderingContext2D, x: number, y: number) {
         const radius = 2;
         ctx.beginPath();
 
@@ -15,7 +15,7 @@ export default function drawSine(canvasId, fillColor) {
         ctx.stroke();
     }
 
-    function plotSine(ctx, xOffset) {
+    function plotSine(ctx: CanvasRenderingContext2D, xOffset: number) {
         const width = ctx.canvas.width;
         const height = ctx.canvas.height;
 
@@ -49,9 +49,11 @@ export default function drawSine(canvasId, fillColor) {
     }
 
     function draw() {
-        const canvas = document.getElementById(canvasId);
+        const canvas = document.getElementById(
+            canvasId,
+        ) as HTMLCanvasElement | null;
         if (canvas == null) return;
-        const context = canvas.getContext('2d');
+        const context = canvas.getContext('2d')!;
 
         context.clearRect(0, 0, 1000, 150);
         context.save();
@@ -64,7 +66,9 @@ export default function drawSine(canvasId, fillColor) {
     }
 
     function fix_dpi() {
-        const canvas = document.getElementById(canvasId);
+        const canvas = document.getElementById(
+            canvasId,
+        ) as HTMLCanvasElement | null;
         if (canvas == null) return;
         let dpi = window.devicePixelRatio;
         canvas.getContext('2d');
@@ -72,7 +76,7 @@ export default function drawSine(canvasId, fillColor) {
             .getPropertyValue('width')
             .slice(0, -2);
         // Scale the canvas
-        canvas.setAttribute('width', `${style_width * dpi}`);
+        canvas.setAttribute('width', `${Number(style_width) * dpi}`);
     }
 
     fix_dpi();
