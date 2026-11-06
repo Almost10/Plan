@@ -1,22 +1,28 @@
 import React from 'react';
-import CardHeader from '../CardHeader.tsx';
+import CardHeader from '../CardHeader';
 import { faCube, faCubes, faSignal } from '@fortawesome/free-solid-svg-icons';
 import { Card } from 'react-bootstrap';
-import { ErrorViewCard } from '../../../views/ErrorView.tsx';
-import FormattedDate from '../../text/FormattedDate.tsx';
+import { ErrorViewCard, PlanError } from '../../../views/ErrorView';
+import FormattedDate from '../../text/FormattedDate';
 import { FontAwesomeIcon as Fa } from '@fortawesome/react-fontawesome';
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import { useTranslation } from 'react-i18next';
-import { CardLoader } from '../../navigation/Loader.tsx';
+import { CardLoader } from '../../navigation/Loader';
 import DataTablesTable from '../../table/DataTablesTable';
+import { PluginHistory, PluginHistoryEntry } from './PluginHistoryCard';
 
-const PluginCurrentCard = ({ data, loadingError }) => {
+type Props = {
+    data?: PluginHistory;
+    loadingError?: PlanError;
+};
+
+const PluginCurrentCard = ({ data, loadingError }: Props) => {
     const { t } = useTranslation();
 
     if (loadingError) return <ErrorViewCard error={loadingError} />;
     if (!data) return <CardLoader />;
 
-    const history = [];
+    const history: PluginHistoryEntry[] = [];
 
     for (const entry of data.history) {
         if (history.find((e) => e.name === entry.name)) continue;
@@ -56,7 +62,7 @@ const PluginCurrentCard = ({ data, loadingError }) => {
                   .map((entry) => {
                       return {
                           name: entry.name,
-                          version: t(entry.version),
+                          version: t(entry.version!),
                           modified: entry.modified,
                           modifiedDisplay: (
                               <FormattedDate date={entry.modified} />
@@ -81,7 +87,10 @@ const PluginCurrentCard = ({ data, loadingError }) => {
         order: [[0, 'desc']],
     };
 
-    const rowKeyFunction = (row, column) => {
+    const rowKeyFunction = (
+        row: { name: string; version: string; modified: number },
+        column: { data: unknown } | null,
+    ) => {
         return (
             row.name +
             '-' +
@@ -104,6 +113,10 @@ const PluginCurrentCard = ({ data, loadingError }) => {
                 id={'plugin-current'}
                 options={options}
                 rowKeyFunction={rowKeyFunction}
+                colorClass={undefined}
+                className={undefined}
+                expandComponent={undefined}
+                clickableRows={undefined}
             />
         </Card>
     );

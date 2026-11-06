@@ -1,13 +1,16 @@
 import { Col } from 'react-bootstrap';
 import React from 'react';
-import LoadIn from '../../components/animation/LoadIn.tsx';
+import LoadIn from '../../components/animation/LoadIn';
 import { useParams } from 'react-router';
-import ExtendableRow from '../../components/layout/extension/ExtendableRow.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
-import PluginHistoryCard from '../../components/cards/common/PluginHistoryCard';
+import ExtendableRow from '../../components/layout/extension/ExtendableRow';
+import { useAuth } from '../../hooks/authenticationHook';
+import PluginHistoryCard, {
+    PluginHistory,
+} from '../../components/cards/common/PluginHistoryCard';
 import { useDataRequest } from '../../hooks/dataFetchHook';
 import { fetchPluginHistory } from '../../service/serverService';
 import PluginCurrentCard from '../../components/cards/common/PluginCurrentCard';
+import { PlanDataResponse } from '../../service/PlanResponse';
 
 const ServerPluginHistory = () => {
     const { authRequired, hasPermission } = useAuth();
@@ -19,7 +22,7 @@ const ServerPluginHistory = () => {
         fetchPluginHistory,
         [identifier],
         seeHistory,
-    );
+    ) as unknown as PlanDataResponse<PluginHistory>;
     return (
         <LoadIn>
             {seeHistory && (

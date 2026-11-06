@@ -1,20 +1,35 @@
 import React from 'react';
-import CardHeader from '../CardHeader.tsx';
+import CardHeader from '../CardHeader';
 import {
     faCodeCompare,
     faCube,
     faSignal,
 } from '@fortawesome/free-solid-svg-icons';
 import { Card } from 'react-bootstrap';
-import { ErrorViewCard } from '../../../views/ErrorView.tsx';
-import FormattedDate from '../../text/FormattedDate.tsx';
+import { ErrorViewCard, PlanError } from '../../../views/ErrorView';
+import FormattedDate from '../../text/FormattedDate';
 import { FontAwesomeIcon as Fa } from '@fortawesome/react-fontawesome';
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import { useTranslation } from 'react-i18next';
-import { CardLoader } from '../../navigation/Loader.tsx';
+import { CardLoader } from '../../navigation/Loader';
 import DataTablesTable from '../../table/DataTablesTable';
 
-const PluginHistoryCard = ({ data, loadingError }) => {
+export type PluginHistoryEntry = {
+    name: string;
+    version?: string;
+    modified: number;
+};
+
+export type PluginHistory = {
+    history: PluginHistoryEntry[];
+};
+
+type Props = {
+    data?: PluginHistory;
+    loadingError?: PlanError;
+};
+
+const PluginHistoryCard = ({ data, loadingError }: Props) => {
     const { t } = useTranslation();
 
     if (loadingError) return <ErrorViewCard error={loadingError} />;
@@ -76,7 +91,10 @@ const PluginHistoryCard = ({ data, loadingError }) => {
         order: [[2, 'desc']],
     };
 
-    const rowKeyFunction = (row, column) => {
+    const rowKeyFunction = (
+        row: { name: string; version: string; modified: number },
+        column: { data: unknown } | null,
+    ) => {
         return (
             row.name +
             '-' +
@@ -99,6 +117,10 @@ const PluginHistoryCard = ({ data, loadingError }) => {
                 id={'plugin-history'}
                 options={options}
                 rowKeyFunction={rowKeyFunction}
+                colorClass={undefined}
+                className={undefined}
+                expandComponent={undefined}
+                clickableRows={undefined}
             />
         </Card>
     );

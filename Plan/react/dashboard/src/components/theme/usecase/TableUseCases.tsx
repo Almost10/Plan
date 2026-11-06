@@ -2,7 +2,7 @@ import React from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import NicknamesCard from '../../cards/player/NicknamesCard';
-import PluginHistoryCard from '../../cards/common/PluginHistoryCard.jsx';
+import PluginHistoryCard from '../../cards/common/PluginHistoryCard';
 
 const BasicTableUseCase = () => {
     const nicknames = [];

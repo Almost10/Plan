@@ -1,18 +1,22 @@
 import { Col, InputGroup } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react';
-import LoadIn from '../../components/animation/LoadIn.tsx';
-import ExtendableRow from '../../components/layout/extension/ExtendableRow.tsx';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
-import PluginHistoryCard from '../../components/cards/common/PluginHistoryCard';
+import LoadIn from '../../components/animation/LoadIn';
+import ExtendableRow from '../../components/layout/extension/ExtendableRow';
+import { useAuth } from '../../hooks/authenticationHook';
+import PluginHistoryCard, {
+    PluginHistory,
+} from '../../components/cards/common/PluginHistoryCard';
 import { useDataRequest } from '../../hooks/dataFetchHook';
 import { fetchPluginHistory } from '../../service/serverService';
 import PluginCurrentCard from '../../components/cards/common/PluginCurrentCard';
-import { useMetadata } from '../../hooks/metadataHook.tsx';
-import Select from '../../components/input/Select.tsx';
+import { useMetadata } from '../../hooks/metadataHook';
+import Select from '../../components/input/Select';
 import { useTranslation } from 'react-i18next';
 import InputGroupText from 'react-bootstrap/InputGroupText';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faServer } from '@fortawesome/free-solid-svg-icons';
+import { Metadata, Server } from '../../hooks/model/Metadata';
+import { PlanDataResponse } from '../../service/PlanResponse';
 
 const NetworkPluginHistory = () => {
     const { t } = useTranslation();
@@ -21,10 +25,10 @@ const NetworkPluginHistory = () => {
     const seeHistory =
         authRequired && hasPermission('page.network.plugin.history');
 
-    const { networkMetadata } = useMetadata();
-    const [serverOptions, setServerOptions] = useState([]);
+    const { networkMetadata } = useMetadata() as Partial<Metadata>;
+    const [serverOptions, setServerOptions] = useState<Server[]>([]);
     const [selectedOption, setSelectedOption] = useState(0);
-    const [identifier, setIdentifier] = useState(undefined);
+    const [identifier, setIdentifier] = useState<string | undefined>(undefined);
     useEffect(() => {
         if (networkMetadata) {
             const options = networkMetadata.servers;
@@ -49,7 +53,7 @@ const NetworkPluginHistory = () => {
         fetchPluginHistory,
         [identifier],
         Boolean(identifier) && seeHistory,
-    );
+    ) as unknown as PlanDataResponse<PluginHistory>;
     if (!identifier) data = { history: [] };
     return (
         <LoadIn>
