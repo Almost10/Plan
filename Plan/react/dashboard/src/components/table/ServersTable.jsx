@@ -108,7 +108,11 @@ const ServerRow = ({ server, sortedBy, onQuickView }) => {
             <td className='p-1'>
                 <NavLink
                     to={'/server/' + encodeURIComponent(server.serverUUID)}
-                    title={t('html.label.serverAnalysis') + ': ' + server.name}
+                    title={
+                        t('html.label.serverAnalysis') +
+                        ': ' +
+                        server.serverName
+                    }
                     className={'btn bg-transparent col-servers'}>
                     <Fa icon={faLink} /> {t('html.label.serverAnalysis')}
                 </NavLink>
@@ -137,7 +141,7 @@ const ServerRow = ({ server, sortedBy, onQuickView }) => {
             <td className='p-1'>
                 <ActionButton
                     className={'btn bg-players-online float-right'}
-                    title={t('html.label.quickView') + ': ' + server.name}
+                    title={t('html.label.quickView') + ': ' + server.serverName}
                     onClick={onQuickView}>
                     <Fa icon={faCaretSquareRight} />
                 </ActionButton>

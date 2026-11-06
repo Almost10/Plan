@@ -33,7 +33,7 @@ const SortDropDown = ({ sortBy, sortReversed, setSortBy }) => {
                 <h6 className='dropdown-header'>{t('html.label.sortBy')}</h6>
                 {sortOptions.map((option) => (
                     <Dropdown.Item
-                        key={option}
+                        key={option.key}
                         onClick={() => setSortBy(option)}>
                         {t(option.label)}
                     </Dropdown.Item>
