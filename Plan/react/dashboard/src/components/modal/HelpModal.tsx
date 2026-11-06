@@ -1,16 +1,16 @@
 import { Modal } from 'react-bootstrap';
 import { FontAwesomeIcon as Fa } from '@fortawesome/react-fontawesome';
-import React, { useCallback } from 'react';
-import { useNavigation } from '../../hooks/navigationHook.tsx';
+import React, { ReactNode, useCallback } from 'react';
+import { useNavigation } from '../../hooks/navigationHook';
 import { useTranslation } from 'react-i18next';
 import ActivityIndexHelp from './help/ActivityIndexHelp';
 import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 import NewPlayerRetentionHelp from './help/NewPlayerRetentionHelp';
 import PlayerRetentionGraphHelp from './help/PlayerRetentionGraphHelp';
-import GroupPermissionHelp from './help/GroupPermissionHelp.tsx';
-import ActionButton from '../input/button/ActionButton.tsx';
-import ModalCloseButton from '../input/button/ModalCloseButton.tsx';
-import { PerformanceHelp } from './help/PerformanceHelp.tsx';
+import GroupPermissionHelp from './help/GroupPermissionHelp';
+import ActionButton from '../input/button/ActionButton';
+import ModalCloseButton from '../input/button/ModalCloseButton';
+import { PerformanceHelp } from './help/PerformanceHelp';
 
 const HelpModal = () => {
     const { t } = useTranslation();
@@ -20,7 +20,9 @@ const HelpModal = () => {
         [setHelpModalTopic],
     );
 
-    const helpTopics = {
+    const helpTopics: Partial<
+        Record<string, { title: string; body: ReactNode }>
+    > = {
         'activity-index': {
             title: t('html.label.activityIndex'),
             body: <ActivityIndexHelp />,
@@ -43,7 +45,7 @@ const HelpModal = () => {
         },
     };
 
-    const helpTopic = helpTopics[helpModalTopic];
+    const helpTopic = helpTopics[helpModalTopic!];
     return (
         <Modal
             id='versionModal'

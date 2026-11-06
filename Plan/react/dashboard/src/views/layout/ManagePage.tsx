@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMetadata } from '../../hooks/metadataHook.tsx';
-import { useNavigation } from '../../hooks/navigationHook.tsx';
+import { useMetadata } from '../../hooks/metadataHook';
+import { useNavigation } from '../../hooks/navigationHook';
 import { staticSite } from '../../service/backendConfiguration';
 import { faSearch, faUsersGear } from '@fortawesome/free-solid-svg-icons';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
-import MainPageRedirect from '../../components/navigation/MainPageRedirect.tsx';
+import { useAuth } from '../../hooks/authenticationHook';
+import MainPageRedirect from '../../components/navigation/MainPageRedirect';
 import ErrorPage from './ErrorPage';
 import Sidebar from '../../components/navigation/Sidebar';
 import Header from '../../components/navigation/Header';
 import { Outlet } from 'react-router';
-import ColorSelectorModal from '../../components/modal/ColorSelectorModal.tsx';
+import ColorSelectorModal from '../../components/modal/ColorSelectorModal';
 import AlertPopupArea from '../../components/alert/AlertPopupArea';
 
 const HelpModal = React.lazy(() => import('../../components/modal/HelpModal'));

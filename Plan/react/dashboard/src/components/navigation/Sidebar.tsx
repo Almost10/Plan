@@ -354,7 +354,7 @@ const renderItem = (
 };
 
 type Props = {
-    page: string;
+    page?: string;
     items: SidebarItem[];
     openItemIndex?: number;
     keepOpen?: boolean;

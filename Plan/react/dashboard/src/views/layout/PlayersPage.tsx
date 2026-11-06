@@ -1,22 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router';
-import { useNavigation } from '../../hooks/navigationHook.tsx';
+import { useNavigation } from '../../hooks/navigationHook';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import Sidebar from '../../components/navigation/Sidebar';
 import Header from '../../components/navigation/Header';
-import ColorSelectorModal from '../../components/modal/ColorSelectorModal.tsx';
-import { useMetadata } from '../../hooks/metadataHook.tsx';
+import ColorSelectorModal from '../../components/modal/ColorSelectorModal';
+import { useMetadata } from '../../hooks/metadataHook';
+import { Metadata } from '../../hooks/model/Metadata';
 import ErrorPage from './ErrorPage';
 import { staticSite } from '../../service/backendConfiguration';
-import { useAuth } from '../../hooks/authenticationHook.tsx';
-import MainPageRedirect from '../../components/navigation/MainPageRedirect.tsx';
+import { useAuth } from '../../hooks/authenticationHook';
+import MainPageRedirect from '../../components/navigation/MainPageRedirect';
 
 const HelpModal = React.lazy(() => import('../../components/modal/HelpModal'));
 
 const PlayersPage = () => {
     const { t, i18n } = useTranslation();
-    const { isProxy, networkName, serverName } = useMetadata();
+    const { isProxy, networkName, serverName } =
+        useMetadata() as Partial<Metadata>;
 
     const [error] = useState(undefined);
     const { sidebarItems, setSidebarItems, currentTab, setCurrentTab } =

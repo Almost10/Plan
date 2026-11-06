@@ -6,6 +6,7 @@ import {
     useMemo,
     useState,
 } from 'react';
+import { SidebarItem } from '../components/navigation/Sidebar';
 
 type NavigationContextValue = {
     currentTab: string | undefined;
@@ -31,13 +32,6 @@ type NavigationContextValue = {
 type LastUpdate = {
     date?: number;
     formatted?: string;
-};
-
-type SidebarItem = {
-    name: string;
-    href?: string;
-    contents?: SidebarItem[];
-    permission?: string;
 };
 
 const NavigationContext = createContext<NavigationContextValue | undefined>(

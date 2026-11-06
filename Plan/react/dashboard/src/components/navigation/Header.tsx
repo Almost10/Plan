@@ -1,4 +1,4 @@
-import { ChangeEvent, CSSProperties } from 'react';
+import { ChangeEvent, CSSProperties, ReactNode } from 'react';
 import { useMetadata } from '../../hooks/metadataHook';
 import { useAuth } from '../../hooks/authenticationHook';
 import { FontAwesomeIcon as Fa } from '@fortawesome/react-fontawesome';
@@ -42,7 +42,7 @@ const LanguageSelector = () => {
 };
 
 type Props = {
-    page: string;
+    page: ReactNode;
     tab?: string;
     hideUpdater?: boolean;
 };

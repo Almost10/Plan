@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBug } from '@fortawesome/free-solid-svg-icons';
 import { faClock } from '@fortawesome/free-regular-svg-icons';
 
-type ErrorLog = {
+export type ErrorLog = {
     fileName: string;
     contents: string[];
 };
