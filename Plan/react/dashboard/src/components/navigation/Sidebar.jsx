@@ -247,7 +247,7 @@ const renderItem = (
             <SidebarCollapse
                 key={i}
                 item={item}
-                open={windowWidth < 660 || (openCollapse && openCollapse === i)}
+                open={windowWidth < 660 || openCollapse === i}
                 setOpen={() => setOpenCollapse(i)}
                 collapseSidebar={collapseSidebar}
             />
