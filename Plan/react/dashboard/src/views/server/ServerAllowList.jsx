@@ -7,7 +7,7 @@ import { Col } from 'react-bootstrap';
 import LoadIn from '../../components/animation/LoadIn.tsx';
 import ExtendableRow from '../../components/layout/extension/ExtendableRow.tsx';
 import { useAuth } from '../../hooks/authenticationHook.tsx';
-import AllowlistBounceTableCard from '../../components/cards/server/tables/AllowlistBounceTableCard.jsx';
+import AllowlistBounceTableCard from '../../components/cards/server/tables/AllowlistBounceTableCard';
 
 const ServerAllowList = () => {
     const { hasPermission } = useAuth();

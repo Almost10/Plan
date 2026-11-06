@@ -9,14 +9,19 @@ import {
     faSkullCrossbones,
 } from '@fortawesome/free-solid-svg-icons';
 import { useTranslation } from 'react-i18next';
-import Scrollable from '../Scrollable.tsx';
-import { usePreferences } from '../../hooks/preferences/preferencesHook.tsx';
-import FormattedDate from '../text/FormattedDate.tsx';
+import Scrollable from '../Scrollable';
+import { usePreferences } from '../../hooks/preferences/preferencesHook';
+import FormattedDate from '../text/FormattedDate';
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import DataTablesTable from './DataTablesTable.jsx';
-import { useTimeAmountFormatter } from '../../util/format/useTimeAmountFormatter.ts';
+import { useTimeAmountFormatter } from '../../util/format/useTimeAmountFormatter';
+import { PlayerKill } from '../../dataHooks/model/session/PlayerKill';
 
-const VictimName = ({ kill }) => {
+type KillProps = {
+    kill: PlayerKill;
+};
+
+const VictimName = ({ kill }: KillProps) => {
     const { t } = useTranslation();
     const { formatTime } = useTimeAmountFormatter();
 
@@ -40,7 +45,7 @@ const VictimName = ({ kill }) => {
     return <>{kill.victimName}</>;
 };
 
-const KillRow = ({ kill }) => {
+const KillRow = ({ kill }: KillProps) => {
     const killSeparator = (
         <Fa
             icon={
@@ -65,7 +70,12 @@ const KillRow = ({ kill }) => {
     );
 };
 
-const KillsTable = ({ kills, deaths }) => {
+type Props = {
+    kills: PlayerKill[];
+    deaths?: boolean;
+};
+
+const KillsTable = ({ kills, deaths }: Props) => {
     const { t } = useTranslation();
     const { preferencesLoaded } = usePreferences();
 
@@ -138,14 +148,20 @@ const KillsTable = ({ kills, deaths }) => {
         order: [[0, 'desc']],
     };
 
-    const rowKeyFunction = useCallback((row, column) => {
-        return (
-            row.killText +
-            row.date +
-            '-' +
-            (column ? JSON.stringify(column.data) : '')
-        );
-    }, []);
+    const rowKeyFunction = useCallback(
+        (
+            row: { killText: string; date: number },
+            column: { data: unknown } | null,
+        ) => {
+            return (
+                row.killText +
+                row.date +
+                '-' +
+                (column ? JSON.stringify(column.data) : '')
+            );
+        },
+        [],
+    );
 
     if (!preferencesLoaded) return <></>;
 
@@ -155,11 +171,18 @@ const KillsTable = ({ kills, deaths }) => {
             options={options}
             colorClass={'bg-player-kills'}
             rowKeyFunction={rowKeyFunction}
+            className={undefined}
+            expandComponent={undefined}
+            clickableRows={undefined}
         />
     );
 };
 
-export const SimpleKillsTable = ({ kills }) => {
+type SimpleKillsTableProps = {
+    kills: PlayerKill[];
+};
+
+export const SimpleKillsTable = ({ kills }: SimpleKillsTableProps) => {
     const { t } = useTranslation();
     const { preferencesLoaded } = usePreferences();
 

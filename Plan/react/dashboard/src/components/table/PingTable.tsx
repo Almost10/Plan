@@ -2,16 +2,27 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon as Fa } from '@fortawesome/react-fontawesome';
 import { faGlobe, faSignal } from '@fortawesome/free-solid-svg-icons';
-import { usePreferences } from '../../hooks/preferences/preferencesHook.tsx';
+import { usePreferences } from '../../hooks/preferences/preferencesHook';
 import DataTablesTable from './DataTablesTable.jsx';
 import {
     localeService,
     reverseRegionLookupMap,
 } from '../../service/localeService.js';
-import { usePingFormatter } from '../../util/format/usePingFormatter.ts';
-import { useDecimalFormatter } from '../../util/format/useDecimalFormatter.ts';
+import { usePingFormatter } from '../../util/format/usePingFormatter';
+import { useDecimalFormatter } from '../../util/format/useDecimalFormatter';
 
-const PingTable = ({ countries }) => {
+export type CountryPing = {
+    country: string;
+    avgPing: number;
+    minPing: number;
+    maxPing: number;
+};
+
+type Props = {
+    countries: CountryPing[];
+};
+
+const PingTable = ({ countries }: Props) => {
     const { t } = useTranslation();
     const { preferencesLoaded } = usePreferences();
     const { formatPing } = usePingFormatter();
@@ -58,7 +69,9 @@ const PingTable = ({ countries }) => {
     );
 
     const rows = countries.map((country) => {
-        const code = reverseRegionLookupMap[country.country];
+        const code = (reverseRegionLookupMap as Record<string, string>)[
+            country.country
+        ];
         const location = code
             ? regions.of(code)
             : country.country.replace(
@@ -91,6 +104,10 @@ const PingTable = ({ countries }) => {
             id={'ping-table'}
             options={options}
             colorClass={'bg-ping'}
+            rowKeyFunction={undefined}
+            className={undefined}
+            expandComponent={undefined}
+            clickableRows={undefined}
         />
     );
 };

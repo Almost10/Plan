@@ -1,11 +1,17 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
-import CardHeader from '../CardHeader.tsx';
+import CardHeader from '../CardHeader';
 import { faWifi } from '@fortawesome/free-solid-svg-icons';
-import PingTable from '../../table/PingTable';
-import { ChartLoader } from '../../navigation/Loader.tsx';
+import PingTable, { CountryPing } from '../../table/PingTable';
+import { ChartLoader } from '../../navigation/Loader';
 
-const PingTableCard = ({ data }) => {
+type Props = {
+    data?: {
+        table?: CountryPing[];
+    };
+};
+
+const PingTableCard = ({ data }: Props) => {
     return (
         <Card id={'ping-per-country'}>
             <CardHeader
