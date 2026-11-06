@@ -63,7 +63,7 @@ const AllowlistBounceTable = ({ bounces, lastSeen }) => {
     ];
 
     const rows = bounces.map((bounce) => {
-        const seenAfterBounce = bounce.lastBounce < lastSeen[bounce.playerUUID];
+        const seenAfterBounce = bounce.lastTime < lastSeen[bounce.playerUUID];
         const playerId = bounce.playerName + ' / ' + bounce.playerUUID;
         return {
             player: playerId,
