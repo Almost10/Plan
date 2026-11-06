@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { Col } from 'react-bootstrap';
 import {
     HoverTrigger,
     useHoverContext,
-} from '../../hooks/interaction/hoverHook.tsx';
-import { useColorEditContext } from '../../hooks/context/colorEditContextHook.jsx';
+} from '../../hooks/interaction/hoverHook';
+import { useColorEditContext } from '../../hooks/context/colorEditContextHook';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { getContrastColor } from '../../util/Color.js';
 
-const Contents = ({ name, color }) => {
+type ContentsProps = {
+    name: string;
+    color: string;
+};
+
+const Contents = ({ name, color }: ContentsProps) => {
     const cssColor = color.startsWith('var(') ? color : `var(--color-${name})`;
     // Convert color value to CSS variable if it's a variable reference
     let contrastColor = getContrastColor(color);
@@ -29,12 +34,14 @@ const Contents = ({ name, color }) => {
                 }
             }}
             className='color-box-wrapper'
-            style={{
-                '--box-color': cssColor,
-                '--box-contrast-color': contrastColor,
-                textOverflow: 'ellipsis',
-                overflow: 'hidden',
-            }}
+            style={
+                {
+                    '--box-color': cssColor,
+                    '--box-contrast-color': contrastColor,
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                } as CSSProperties
+            }
             title={`${name}: ${color}`}>
             <span>{name}</span>
             {!hovered && !deleting && <div>{color}</div>}
@@ -52,7 +59,13 @@ const Contents = ({ name, color }) => {
     );
 };
 
-const BackgroundColorBox = ({ name, color, text }) => {
+type BackgroundColorBoxProps = {
+    name: string;
+    color: string;
+    text: boolean;
+};
+
+const BackgroundColorBox = ({ name, color, text }: BackgroundColorBoxProps) => {
     return (
         <Col
             lg={2}
@@ -69,7 +82,12 @@ const BackgroundColorBox = ({ name, color, text }) => {
     );
 };
 
-export const ColorBox = ({ name, color }) => {
+type Props = {
+    name: string;
+    color: string;
+};
+
+export const ColorBox = ({ name, color }: Props) => {
     const isTextColor =
         name.includes('text') ||
         (name.includes('percent') && name.includes('white'));
