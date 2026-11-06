@@ -203,9 +203,8 @@ const RegisterPage = () => {
             }, 10000);
         } else {
             setFailMessage(
-                t('html.register.error.failed') + data
-                    ? data.error
-                    : t('generic.noData'),
+                t('html.register.error.failed') +
+                    (data ? data.error : t('generic.noData')),
             );
         }
     };

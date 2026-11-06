@@ -236,18 +236,15 @@ const LoginPage = () => {
                             ? error.data.error
                             : error.message),
                 );
-                setPassword('');
             }
         } else if (data && data.success) {
             await updateLoginDetails();
             redirectAfterLogin();
         } else {
             setFailMessage(
-                t('html.login.failed') + data
-                    ? data.error
-                    : t('generic.noData'),
+                t('html.login.failed') +
+                    (data ? data.error : t('generic.noData')),
             );
-            setPassword('');
         }
     };
 
